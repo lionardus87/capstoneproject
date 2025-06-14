@@ -16,7 +16,11 @@ export default function Footer() {
 			<Grid container spacing={5}>
 				{/* About Us */}
 				<Grid item xs={12} md={3}>
-					<Typography variant="h6" gutterBottom sx={{ color: "#B6CA93" }}>
+					<Typography
+						variant="h6"
+						gutterBottom
+						sx={{ color: "#B6CA93", fontFamily: "inherit" }}
+					>
 						About Us
 					</Typography>
 					<Typography variant="body2">
@@ -27,7 +31,11 @@ export default function Footer() {
 
 				{/* Quick Links */}
 				<Grid item xs={12} md={3}>
-					<Typography variant="h6" gutterBottom sx={{ color: "#B6CA93" }}>
+					<Typography
+						variant="h6"
+						gutterBottom
+						sx={{ color: "#B6CA93", fontFamily: "inherit" }}
+					>
 						Quick Links
 					</Typography>
 					<Stack spacing={1}>
@@ -42,7 +50,11 @@ export default function Footer() {
 
 				{/* Products */}
 				<Grid item xs={12} md={3}>
-					<Typography variant="h6" gutterBottom sx={{ color: "#B6CA93" }}>
+					<Typography
+						variant="h6"
+						gutterBottom
+						sx={{ color: "#B6CA93", fontFamily: "inherit" }}
+					>
 						Products
 					</Typography>
 					<Stack spacing={1}>
@@ -57,7 +69,11 @@ export default function Footer() {
 
 				{/* Contact Info */}
 				<Grid item xs={12} md={3}>
-					<Typography variant="h6" gutterBottom sx={{ color: "#B6CA93" }}>
+					<Typography
+						variant="h6"
+						gutterBottom
+						sx={{ color: "#B6CA93", fontFamily: "inherit" }}
+					>
 						Contact
 					</Typography>
 					<Typography variant="body2">123 Coffee Lane, Sydney, NSW 2000</Typography>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	Box,
 	Typography,
@@ -9,8 +9,9 @@ import {
 	Container,
 	Grid,
 	Card,
-	CardContent,
+	IconButton,
 } from "@mui/material";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalCafeIcon from "@mui/icons-material/LocalCafe";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
@@ -49,59 +50,80 @@ const testimonials = [
 ];
 
 export default function HomePage() {
+	const [index, setIndex] = useState(0);
+	const visibleCount = 2;
+
+	const maxIndex = Math.max(testimonials.length - visibleCount, 0);
+
+	const handlePrev = () => {
+		setIndex((prev) => Math.max(prev - 1, 0));
+	};
+
+	const handleNext = () => {
+		setIndex((prev) => Math.min(prev + 1, maxIndex));
+	};
+
+	const visibleTestimonials = testimonials.slice(index, index + visibleCount);
 	return (
-		<Box sx={{ bgcolor: "#F7F9F3" }}>
-			{/* About Us */}
+		<Box sx={{ bgcolor: "#F7F9F3", fontFamily: "inherit" }}>
+			{/* Hero Section with Coffee Image */}
 			<Box
 				sx={{
-					pt: 3,
-					pb: 10,
 					px: 2,
-					backgroundColor: "#F7F9F3",
+					py: { xs: 6, md: 10 },
 					textAlign: "center",
+					backgroundImage: `url('https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80')`,
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					color: "#fff",
 				}}
 			>
-				<Container maxWidth={false}>
-					<Typography variant="h3" fontWeight="bold" gutterBottom color="#435A12">
-						Skip the queue. Coffee at your fingertips.
-					</Typography>
+				<Container maxWidth="md">
 					<Typography
-						variant="h6"
-						color="text.secondary"
-						maxWidth="sm"
-						gutterBottom
-						sx={{ mx: "auto" }}
+						variant="h2"
+						fontWeight="bold"
+						gutterBottomsx={{ fontFamily: "'Playfair Display', serif" }}
 					>
-						Order ahead from your favourite local cafés and restaurants.
+						Skip the Queue
+					</Typography>
+					<Typography variant="h5" fontWeight={300} gutterBottom>
+						Coffee at your fingertips — order ahead, save time, enjoy more.
 					</Typography>
 
 					<Stack
 						direction={{ xs: "column", sm: "row" }}
 						spacing={2}
-						sx={{ mt: 4, justifyContent: "center", alignItems: "center" }}
+						sx={{
+							mt: 4,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
 					>
 						<TextField
 							variant="outlined"
-							placeholder="Enter location or suburb"
+							placeholder="Enter location"
 							size="small"
-							sx={{ width: { xs: "100%", sm: "300px" } }}
+							sx={{
+								width: { xs: "100%", sm: "300px" },
+								borderRadius: 5,
+								bgcolor: "#fff",
+							}}
 							InputProps={{
 								startAdornment: (
 									<InputAdornment position="start">
 										<SearchIcon />
 									</InputAdornment>
 								),
-								sx: { borderRadius: 5, backgroundColor: "#fff" },
 							}}
 						/>
 						<Button
 							variant="contained"
 							sx={{
 								borderRadius: 5,
-								backgroundColor: "#7E8E20",
 								px: 4,
 								textTransform: "none",
 								fontWeight: "bold",
+								backgroundColor: "#7E8E20",
 								"&:hover": { backgroundColor: "#5E6F1A" },
 							}}
 						>
@@ -111,60 +133,58 @@ export default function HomePage() {
 				</Container>
 			</Box>
 
-			{/* Hero Section */}
-			<Box
-				sx={{
-					pt: 3,
-					pb: 10,
-					px: 2,
-					backgroundColor: "#DCE5D2",
-					textAlign: "center",
-				}}
-			>
-				<Container maxWidth={false}>
-					<Typography variant="h4" fontWeight="bold" gutterBottom color="#435A12">
+			{/* About Us */}
+			<Box sx={{ py: 10, px: 2 }}>
+				<Container maxWidth="md" sx={{ textAlign: "center" }}>
+					<Typography
+						variant="h4"
+						fontWeight="bold"
+						gutterBottom
+						color="#435A12"
+						sx={{ fontFamily: "'Playfair Display', serif" }}
+					>
 						About CoffeeQue
 					</Typography>
-					<Typography
-						variant="body1"
-						color="text.secondary"
-						maxWidth="sm"
-						sx={{ mx: "auto" }}
-					>
-						CoffeeQue is your go-to app for skipping queues and ordering ahead at your
-						favourite local cafés. We're passionate about connecting busy people with
-						great coffee and food – fast, simple, and reliable.
+					<Typography variant="body1" color="text.secondary" paragraph>
+						CoffeeQue was born from the hustle of daily commutes and the love of a
+						perfectly brewed cup. We believe no one should have to choose between
+						great coffee and their time. Our mission is to eliminate the wait, reduce
+						the friction, and bring coffee-lovers closer to the cafés they love.
+					</Typography>
+					<Typography variant="body1" color="text.secondary">
+						With CoffeeQue, you can skip the line, order in advance, and have your
+						drink waiting for you — piping hot and just the way you like it. Whether
+						you're heading to work or taking a break, we help you reclaim your time
+						without compromising on quality.
 					</Typography>
 				</Container>
 			</Box>
 
 			{/* Products Section */}
-			<Box
-				sx={{
-					pt: 3,
-					pb: 10,
-					px: 2,
-					backgroundColor: "#F7F9F3",
-					textAlign: "center",
-				}}
-			>
-				<Container maxWidth={false}>
-					<Typography variant="h4" fontWeight="bold" gutterBottom color="#435A12">
-						Products
+			<Box sx={{ py: 10, px: 2, textAlign: "center" }}>
+				<Container maxWidth="md">
+					<Typography
+						variant="h4"
+						fontWeight="bold"
+						gutterBottom
+						color="#435A12"
+						sx={{ fontFamily: "'Playfair Display', serif" }}
+					>
+						What We Offer
 					</Typography>
-					<Grid container spacing={4} justifyContent="center">
+					<Grid container spacing={4} justifyContent="center" sx={{ mt: 2 }}>
 						{products.map((product, index) => (
-							<Grid item xs={12} md={6} key={index}>
+							<Grid item xs={12} sm={6} key={index}>
 								<Card
-									elevation={2}
+									elevation={3}
 									sx={{
+										p: 4,
+										borderRadius: 4,
+										textAlign: "center",
 										display: "flex",
 										flexDirection: "column",
 										alignItems: "center",
-										textAlign: "center",
-										p: 4,
-										borderRadius: 4,
-										height: "100%",
+										bgcolor: "#DCE5D2",
 									}}
 								>
 									{product.icon}
@@ -182,35 +202,40 @@ export default function HomePage() {
 			</Box>
 
 			{/* Testimonials Section */}
-			<Box
-				sx={{
-					backgroundColor: "#DCE5D2",
-					pt: 3,
-					pb: 10,
-					px: 2,
-					textAlign: "center",
-				}}
-			>
+			<Box sx={{ pt: 3, pb: 10, px: 2, textAlign: "center" }}>
 				<Container maxWidth={false}>
-					<Typography variant="h4" fontWeight="bold" gutterBottom color="#435A12">
+					<Typography
+						variant="h4"
+						fontWeight="bold"
+						gutterBottom
+						color="#435A12"
+						sx={{ fontFamily: "'Playfair Display', serif" }}
+					>
 						What people are saying
 					</Typography>
-					<Grid container spacing={4} justifyContent="center" mt={2}>
-						{testimonials.map((t, i) => (
-							<Grid item xs={12} md={4} key={i}>
+
+					<Stack direction="row" alignItems="center" justifyContent="center" mt={4}>
+						<IconButton onClick={handlePrev} disabled={index === 0}>
+							<ArrowBackIos sx={{ color: "#435A12" }} />
+						</IconButton>
+
+						<Stack direction="row" spacing={4} justifyContent="center">
+							{visibleTestimonials.map((t, i) => (
 								<Card
-									elevation={0}
+									key={i}
 									sx={{
+										width: { xs: "80vw", sm: "300px" },
 										px: 3,
 										py: 4,
 										borderRadius: 3,
-										height: "100%",
-										backgroundColor: "#fff",
+										backgroundColor: "#DCE5D2",
+										textAlign: "center",
 										display: "flex",
 										flexDirection: "column",
 										alignItems: "center",
-										textAlign: "center",
+										flexShrink: 0,
 									}}
+									elevation={0}
 								>
 									<Typography variant="body1" gutterBottom>
 										“{t.quote}”
@@ -219,9 +244,13 @@ export default function HomePage() {
 										— {t.name}
 									</Typography>
 								</Card>
-							</Grid>
-						))}
-					</Grid>
+							))}
+						</Stack>
+
+						<IconButton onClick={handleNext} disabled={index === maxIndex}>
+							<ArrowForwardIos sx={{ color: "#435A12" }} />
+						</IconButton>
+					</Stack>
 				</Container>
 			</Box>
 		</Box>

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import HomePage from "../pages/HomePage";
+import LoginPage from "../components/LoginModal";
 
 export default function AppRouter() {
 	return (

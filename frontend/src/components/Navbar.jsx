@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, Button, Stack } from "@mui/material";
+import { AppBar, Toolbar, Button, Stack, ButtonBase, Box } from "@mui/material";
 import LoginModal from "./LoginModal";
+import { useNavigate } from "react-router";
+import logo from "../assets/CQ.png";
 
 export default function Navbar() {
 	const [signin, setSignin] = useState(false);
+	const navigate = useNavigate();
 
 	const handleLogin = async (formData) => {
 		console.log("Logging in with:", formData);
@@ -24,7 +27,16 @@ export default function Navbar() {
 				}}
 			>
 				<Toolbar sx={{ justifyContent: "space-between" }}>
-					<Typography
+					<ButtonBase onClick={() => navigate("/")}>
+						<Box
+							component="img"
+							src={logo}
+							alt="CoffeeQue Logo"
+							sx={{ height: 50, mr: 2, borderRadius: "50%", objectFit: "cover" }}
+						/>
+					</ButtonBase>
+					{/* <Button
+						onClick={() => navigate("/")}
 						variant="h6"
 						sx={{
 							fontWeight: "bold",
@@ -33,10 +45,10 @@ export default function Navbar() {
 						}}
 					>
 						CoffeeQue
-					</Typography>
+					</Button> */}
 
-					<Stack direction="row" spacing={3} alignItems="center">
-						{["Home", "Products", "ContactUs", "Sign Up"].map((item, index) => (
+					{/* <Stack direction="row" spacing={3} alignItems="center">
+						{["Home", "Products", "ContactUs"].map((item, index) => (
 							<Button
 								key={index}
 								disableRipple
@@ -56,7 +68,7 @@ export default function Navbar() {
 								{item}
 							</Button>
 						))}
-					</Stack>
+					</Stack> */}
 
 					<Stack direction="row" spacing={2}>
 						<Button

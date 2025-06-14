@@ -11,16 +11,6 @@ import {
 	Stack,
 } from "@mui/material";
 
-// Color Palette
-const colors = {
-	background: "#DCE5D2",
-	oliveDrab: "#7E8E20",
-	oliveDrabDark: "#5E6F1A",
-	armyGreen: "#435A12",
-	pineGlade: "#B6CA93",
-	softCream: "#F7F9F3",
-};
-
 export default function SignupModal({ open, onClose, onSave }) {
 	const [formData, setFormData] = useState({
 		username: "",
@@ -35,13 +25,17 @@ export default function SignupModal({ open, onClose, onSave }) {
 	};
 
 	const handleSubmit = async () => {
+		if (formData.password !== formData.repassword) {
+			alert("Passwords do not match.");
+			return;
+		}
 		if (onSave) {
 			const result = await onSave(formData);
 			if (result?.success) {
-				alert("Login successful!");
+				alert("Signup successful!");
 				onClose();
 			} else {
-				alert("Login failed: " + result?.message);
+				alert("Signup failed: " + result?.message);
 			}
 		}
 	};
@@ -51,13 +45,13 @@ export default function SignupModal({ open, onClose, onSave }) {
 			<DialogTitle
 				sx={{
 					backgroundColor: "#F7F9F3",
-					color: colors.armyGreen,
+					color: "#435A12",
 					textAlign: "center",
 					fontWeight: "bold",
 					p: 3,
 				}}
 			>
-				Welcome
+				Create New Account
 			</DialogTitle>
 			<DialogContent sx={{ backgroundColor: "#F7F9F3" }}>
 				<Box sx={{ pt: 3, pb: 5, px: 8 }}>
@@ -67,7 +61,7 @@ export default function SignupModal({ open, onClose, onSave }) {
 							name="username"
 							fullWidth
 							variant="outlined"
-							value={formData.email}
+							value={formData.username}
 							onChange={handleChange}
 							sx={{ width: 400 }}
 						/>
@@ -80,7 +74,6 @@ export default function SignupModal({ open, onClose, onSave }) {
 							onChange={handleChange}
 							sx={{ width: 400 }}
 						/>
-
 						<TextField
 							label="Password"
 							name="password"
@@ -94,7 +87,7 @@ export default function SignupModal({ open, onClose, onSave }) {
 							name="repassword"
 							fullWidth
 							variant="outlined"
-							value={formData.email}
+							value={formData.repassword}
 							onChange={handleChange}
 							sx={{ width: 400 }}
 						/>
@@ -103,7 +96,7 @@ export default function SignupModal({ open, onClose, onSave }) {
 			</DialogContent>
 			<DialogActions
 				sx={{
-					backgroundColor: colors.softCream,
+					backgroundColor: "#F7F9F3",
 					justifyContent: "space-between",
 					px: 3,
 					pb: 2,
@@ -120,11 +113,11 @@ export default function SignupModal({ open, onClose, onSave }) {
 					variant="contained"
 					onClick={handleSubmit}
 					sx={{
-						backgroundColor: colors.oliveDrab,
+						backgroundColor: "#7E8E20",
 						color: "#fff",
 						textTransform: "none",
 						"&:hover": {
-							backgroundColor: colors.oliveDrabDark,
+							backgroundColor: "#5E6F1A",
 						},
 					}}
 				>

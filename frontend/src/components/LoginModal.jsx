@@ -10,17 +10,7 @@ import {
 	Typography,
 	Stack,
 } from "@mui/material";
-import SignupModal from "../pages/SignupModal";
-
-// Color Palette
-const colors = {
-	background: "#DCE5D2",
-	oliveDrab: "#7E8E20",
-	oliveDrabDark: "#5E6F1A",
-	armyGreen: "#435A12",
-	pineGlade: "#B6CA93",
-	softCream: "#F7F9F3",
-};
+import SignupModal from "./SignupModal";
 
 export default function LoginModal({ open, onClose, onSave }) {
 	const [formData, setFormData] = useState({ email: "", password: "" });
@@ -56,7 +46,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 				<DialogTitle
 					sx={{
 						backgroundColor: "#F7F9F3",
-						color: colors.armyGreen,
+						color: "#435A12",
 						textAlign: "center",
 						fontWeight: "bold",
 						p: 3,
@@ -69,7 +59,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 						<Stack spacing={3}>
 							<TextField
 								label="Username or Email"
-								name="username or email"
+								name="email"
 								fullWidth
 								variant="outlined"
 								value={formData.email}
@@ -89,7 +79,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 				</DialogContent>
 				<DialogActions
 					sx={{
-						backgroundColor: colors.softCream,
+						backgroundColor: "#F7F9F3",
 						justifyContent: "space-between",
 						px: 3,
 						pb: 2,
@@ -106,11 +96,11 @@ export default function LoginModal({ open, onClose, onSave }) {
 						variant="contained"
 						onClick={handleSubmit}
 						sx={{
-							backgroundColor: colors.oliveDrab,
+							backgroundColor: "#7E8E20",
 							color: "#fff",
 							textTransform: "none",
 							"&:hover": {
-								backgroundColor: colors.oliveDrabDark,
+								backgroundColor: "#5E6F1A",
 							},
 						}}
 					>
@@ -122,7 +112,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 					<Button
 						variant="outlined"
 						onClick={() => setSignup(true)}
-						sx={{ mt: 1, backgroundColor: "white" }}
+						sx={{ mt: 1, backgroundColor: "#ffffff" }}
 					>
 						Sign Up
 					</Button>

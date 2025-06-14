@@ -10,6 +10,7 @@ import {
 	Grid,
 	Card,
 	IconButton,
+	Divider,
 } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -105,7 +106,7 @@ export default function HomePage() {
 							size="small"
 							sx={{
 								width: { xs: "100%", sm: "300px" },
-								borderRadius: 5,
+								borderRadius: 2,
 								bgcolor: "#fff",
 							}}
 							InputProps={{
@@ -134,7 +135,7 @@ export default function HomePage() {
 			</Box>
 
 			{/* About Us */}
-			<Box sx={{ py: 10, px: 2 }}>
+			<Box sx={{ py: 4, px: 2 }}>
 				<Container maxWidth="md" sx={{ textAlign: "center" }}>
 					<Typography
 						variant="h4"
@@ -159,9 +160,9 @@ export default function HomePage() {
 					</Typography>
 				</Container>
 			</Box>
-
+			<Divider sx={{ my: 4 }} />
 			{/* Products Section */}
-			<Box sx={{ py: 10, px: 2, textAlign: "center" }}>
+			<Box sx={{ py: 5, px: 2, textAlign: "center" }}>
 				<Container maxWidth="md">
 					<Typography
 						variant="h4"
@@ -200,7 +201,7 @@ export default function HomePage() {
 					</Grid>
 				</Container>
 			</Box>
-
+			<Divider sx={{ my: 4 }} />
 			{/* Testimonials Section */}
 			<Box sx={{ pt: 3, pb: 10, px: 2, textAlign: "center" }}>
 				<Container maxWidth={false}>

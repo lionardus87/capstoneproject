@@ -83,11 +83,12 @@ export default function HomePage() {
 					<Typography
 						variant="h2"
 						fontWeight="bold"
-						gutterBottomsx={{ fontFamily: "'Playfair Display', serif" }}
+						gutterbottom="true"
+						sx={{ fontFamily: "'Playfair Display', serif" }}
 					>
 						Skip the Queue
 					</Typography>
-					<Typography variant="h5" fontWeight={300} gutterBottom>
+					<Typography variant="h5" fontWeight={300} gutterbottom="true">
 						Coffee at your fingertips — order ahead, save time, enjoy more.
 					</Typography>
 
@@ -140,7 +141,7 @@ export default function HomePage() {
 					<Typography
 						variant="h4"
 						fontWeight="bold"
-						gutterBottom
+						gutterbottom="true"
 						color="#435A12"
 						sx={{ fontFamily: "'Playfair Display', serif" }}
 					>
@@ -167,7 +168,7 @@ export default function HomePage() {
 					<Typography
 						variant="h4"
 						fontWeight="bold"
-						gutterBottom
+						gutterbottom="true"
 						color="#435A12"
 						sx={{ fontFamily: "'Playfair Display', serif" }}
 					>
@@ -189,7 +190,7 @@ export default function HomePage() {
 									}}
 								>
 									{product.icon}
-									<Typography variant="h6" fontWeight="bold" mt={2} gutterBottom>
+									<Typography variant="h6" fontWeight="bold" mt={2} gutterbottom="true">
 										{product.title}
 									</Typography>
 									<Typography variant="body2" color="text.secondary">
@@ -208,7 +209,7 @@ export default function HomePage() {
 					<Typography
 						variant="h4"
 						fontWeight="bold"
-						gutterBottom
+						gutterbottom="true"
 						color="#435A12"
 						sx={{ fontFamily: "'Playfair Display', serif" }}
 					>
@@ -238,7 +239,7 @@ export default function HomePage() {
 									}}
 									elevation={0}
 								>
-									<Typography variant="body1" gutterBottom>
+									<Typography variant="body1" gutterbottom="true">
 										“{t.quote}”
 									</Typography>
 									<Typography variant="subtitle2" fontWeight="bold" mt={2}>

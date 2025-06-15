@@ -27,7 +27,7 @@ export default function Footer() {
 						<Grid item xs={12} md={4}>
 							<Typography
 								variant="h6"
-								gutterBottom
+								gutterbottom="true"
 								sx={{ color: "#B6CA93", fontFamily: "inherit" }}
 							>
 								Quick Links
@@ -49,7 +49,7 @@ export default function Footer() {
 						<Grid item xs={12} md={4}>
 							<Typography
 								variant="h6"
-								gutterBottom
+								gutterbottom="true"
 								sx={{ color: "#B6CA93", fontFamily: "inherit" }}
 							>
 								Products
@@ -68,7 +68,7 @@ export default function Footer() {
 						<Grid item xs={12} md={4}>
 							<Typography
 								variant="h6"
-								gutterBottom
+								gutterbottom="true"
 								sx={{ color: "#B6CA93", fontFamily: "inherit" }}
 							>
 								Contact

@@ -9,26 +9,31 @@ import {
 	DialogActions,
 	Typography,
 	Stack,
+	Snackbar,
+	Alert,
 } from "@mui/material";
 import SignupModal from "./SignupModal";
+import { Link } from "react-router-dom";
+import useSnackbar from "../hooks/useSnackbar";
 
 export default function LoginModal({ open, onClose, onSave }) {
-	const [formData, setFormData] = useState({ email: "", password: "" });
+	const [formData, setFormData] = useState({ identifier: "", password: "" });
 	const [signup, setSignup] = useState(false);
+	const { snackbar, showSnackbar, handleClose } = useSnackbar();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = async () => {
+	const handleLogin = async () => {
 		if (onSave) {
 			const result = await onSave(formData);
 			if (result?.success) {
-				alert("Login successful!");
+				showSnackbar("Login successful!", "success");
 				onClose();
 			} else {
-				alert("Login failed: " + result?.message);
+				showSnackbar("Login failed: " + result?.message, "error");
 			}
 		}
 	};
@@ -55,14 +60,14 @@ export default function LoginModal({ open, onClose, onSave }) {
 					Welcome Back
 				</DialogTitle>
 				<DialogContent sx={{ backgroundColor: "#F7F9F3" }}>
-					<Box sx={{ pt: 3, pb: 5, px: 8 }}>
+					<Box sx={{ pt: 3, pb: 2, px: 8 }}>
 						<Stack spacing={3}>
 							<TextField
 								label="Username or Email"
-								name="email"
+								name="identifier"
 								fullWidth
 								variant="outlined"
-								value={formData.email}
+								value={formData.identifier}
 								onChange={handleChange}
 								sx={{ width: 400 }}
 							/>
@@ -80,7 +85,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 				<DialogActions
 					sx={{
 						backgroundColor: "#F7F9F3",
-						justifyContent: "space-between",
+						justifyContent: "center",
 						px: 3,
 						pb: 2,
 					}}
@@ -94,7 +99,7 @@ export default function LoginModal({ open, onClose, onSave }) {
 					</Button>
 					<Button
 						variant="contained"
-						onClick={handleSubmit}
+						onClick={handleLogin}
 						sx={{
 							backgroundColor: "#7E8E20",
 							color: "#fff",
@@ -107,15 +112,32 @@ export default function LoginModal({ open, onClose, onSave }) {
 						Login
 					</Button>
 				</DialogActions>
-				<Box py={3} textAlign="center" sx={{ backgroundColor: "#F7F9F3" }}>
-					<Typography variant="body2">Don't have an account?</Typography>
-					<Button
+				<Box
+					py={3}
+					textAlign="center"
+					sx={{
+						display: "flex",
+						backgroundColor: "#F7F9F3",
+						justifyContent: "center",
+					}}
+				>
+					<Typography variant="body2" sx={{ color: "#435A12" }}>
+						Don't have an account?
+					</Typography>
+					<Link
 						variant="outlined"
 						onClick={() => setSignup(true)}
-						sx={{ mt: 1, backgroundColor: "#ffffff" }}
+						sx={{
+							mt: 1,
+							backgroundColor: "#ffffff",
+							"&:hover": {
+								color: "#5E6F1A",
+							},
+							"&:active": { backgroundColor: "#5E6F1A" },
+						}}
 					>
 						Sign Up
-					</Button>
+					</Link>
 				</Box>
 			</Dialog>
 
@@ -125,6 +147,22 @@ export default function LoginModal({ open, onClose, onSave }) {
 				onClose={() => setSignup(false)}
 				onSave={handleSignup}
 			/>
+
+			{/* Snackbar toast */}
+			<Snackbar
+				open={snackbar.open}
+				autoHideDuration={4000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert
+					onClose={handleClose}
+					severity={snackbar.severity}
+					sx={{ width: "100%" }}
+				>
+					{snackbar.message}
+				</Alert>
+			</Snackbar>
 		</>
 	);
 }

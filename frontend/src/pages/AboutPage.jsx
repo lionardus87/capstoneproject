@@ -8,7 +8,7 @@ export default function AboutPage() {
 				<Typography
 					variant="h3"
 					align="center"
-					gutterBottom
+					gutterbottom
 					sx={{ color: "#435A12", fontWeight: "bold" }}
 				>
 					About CoffeeQue

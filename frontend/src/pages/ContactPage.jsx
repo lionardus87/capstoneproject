@@ -50,7 +50,7 @@ export default function ContactPage() {
 					<Typography
 						variant="h4"
 						align="center"
-						gutterBottom
+						gutterbottom
 						sx={{ color: "#435A12" }}
 					>
 						Contact Us

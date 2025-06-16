@@ -14,10 +14,15 @@ const createUser = async (userData) => {
 };
 
 const checkPassword = async (userData) => {
+	const { email, username, password } = userData;
+
+	if (!email && !username) return null;
+
 	const response = await axios.post(
 		"http://localhost:3003/api/users/checkPassword",
-		userData
+		{ email, username, password }
 	);
+
 	return response.data;
 };
 

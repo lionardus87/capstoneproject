@@ -21,7 +21,7 @@ function reducer(state, action) {
 		case "signOut": {
 			sessionStorage.removeItem("accessToken");
 			sessionStorage.removeItem("refreshToken");
-			return { user: null, token: null, isLogin: false };
+			return { ...initialState };
 		}
 		default:
 			return state;

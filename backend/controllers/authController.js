@@ -23,11 +23,24 @@ const register = async (userBody) => {
 	return userData;
 };
 
-const login = async ({ emailId, password }) => {
-	const user = await checkPassword({ emailId, password });
+const login = async ({ identifier, password }) => {
+	let user;
+
+	// Check if identifier is an email or username
+	if (identifier.includes("@")) {
+		user = await checkPassword({ email: identifier, password });
+	} else {
+		user = await checkPassword({ username: identifier, password });
+	}
+
 	if (!user) return null;
 
-	const payload = { id: user._id, emailId: user.emailId, role: user.role };
+	const payload = {
+		id: user._id,
+		username: user.username,
+		email: user.email,
+		role: user.role,
+	};
 	const accessToken = jwt.sign(payload, privateKey, { expiresIn: "3h" });
 	const refreshToken = jwt.sign(payload, refreshTokenKey, { expiresIn: "1d" });
 

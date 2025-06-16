@@ -20,16 +20,27 @@ router.get("/", async (req, res) => {
 // POST check password
 router.post("/checkPassword", async (req, res) => {
 	try {
-		const { emailId, password } = req.body;
-		const user = await User.findOne({ email: emailId });
-		if (!user) return res.status(401).send("User not found");
+		const { email, username, password } = req.body;
+
+		if (!email && !username) {
+			return res.status(400).send("Missing email or username");
+		}
+
+		const query = email ? { email } : { username };
+		const user = await User.findOne(query);
+
+		if (!user) {
+			return res.status(401).send("User not found");
+		}
 
 		const isValid = await bcrypt.compare(password, user.password);
-		if (!isValid) return res.status(401).send("Invalid password");
+		if (!isValid) {
+			return res.status(401).send("Invalid password");
+		}
 
 		res.status(200).json(user);
 	} catch (err) {
-		console.error(err);
+		console.error("checkPassword error:", err);
 		res.status(500).send("Error checking password");
 	}
 });

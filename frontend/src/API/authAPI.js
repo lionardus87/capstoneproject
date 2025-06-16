@@ -1,16 +1,25 @@
 import axios from "axios";
 
+const APIurl = "http://localhost:3003/api/auth";
+
 export const loginRequest = async ({ identifier, password }) => {
-	const result = await axios.post("http://localhost:3003/api/auth/login", {
-		identifier,
-		password,
-	});
-	return result.data;
+	try {
+		const response = await axios.post(`${APIurl}/login`, {
+			identifier,
+			password,
+		});
+		return { success: true, ...response.data };
+	} catch (err) {
+		return {
+			success: false,
+			message: err.response?.data?.message || err.message || "Login failed",
+		};
+	}
 };
 
 export const registerUser = async ({ username, email, password }) => {
 	try {
-		const response = await axios.post("http://localhost:3003/api/auth/register", {
+		const response = await axios.post(`${APIurl}/register`, {
 			username,
 			email,
 			password,
@@ -23,7 +32,7 @@ export const registerUser = async ({ username, email, password }) => {
 
 export const getLoginedUser = async () => {
 	const token = sessionStorage.getItem("accessToken");
-	const request = axios.request("http://localhost:3003/api/auth/me", {
+	const request = axios.request(`${APIurl}/me`, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 
@@ -33,7 +42,7 @@ export const getLoginedUser = async () => {
 
 export const getAccessToken = async () => {
 	const token = sessionStorage.getItem("refreshToken");
-	const result = await axios.get("http://localhost:3003/api/auth/accessToken", {
+	const result = await axios.get(`${APIurl}/accessToken`, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 	sessionStorage.setItem("accessToken", result.data.accessToken);

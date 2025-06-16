@@ -1,18 +1,52 @@
-import React, { useState } from "react";
-import { AppBar, Toolbar, Button, Stack, ButtonBase, Box } from "@mui/material";
+import React, { useState, useContext } from "react";
+import {
+	AppBar,
+	Toolbar,
+	Button,
+	Stack,
+	ButtonBase,
+	Box,
+	Snackbar,
+	Alert,
+} from "@mui/material";
 import LoginModal from "./LoginModal";
 import { useNavigate } from "react-router";
 import logo from "../assets/CQ.png";
+import { AuthContext } from "../contexts/AuthContext";
+import { loginRequest } from "../API/authAPI";
+import useSnackbar from "../hooks/useSnackbar";
 
 export default function Navbar() {
 	const [signin, setSignin] = useState(false);
 	const navigate = useNavigate();
+	const { auth, authDispatch } = useContext(AuthContext);
+	const { snackbar, showSnackbar, handleClose } = useSnackbar();
 
+	// Login logic
 	const handleLogin = async (formData) => {
-		console.log("Logging in with:", formData);
+		try {
+			const { accessToken, refreshToken, user } = await loginRequest(formData);
 
-		// Simulate successful login
-		return { success: true };
+			authDispatch({
+				type: "signIn",
+				payload: { user, accessToken, refreshToken },
+			});
+			return { success: true };
+		} catch (err) {
+			console.error("Login failed:", err);
+
+			return {
+				success: false,
+				message: err?.response?.data?.message || "Invalid credentials",
+			};
+		}
+	};
+
+	// Logout logic
+	const handleLogout = () => {
+		authDispatch({ type: "signOut" });
+		showSnackbar("Logout successful", "success");
+		navigate("/"); // optional: redirect to home after logout
 	};
 
 	return (
@@ -87,24 +121,47 @@ export default function Navbar() {
 						>
 							Order now
 						</Button>
-						<Button
-							variant="contained"
-							onClick={() => setSignin(true)}
-							sx={{
-								backgroundColor: "#fff",
-								color: "#435A12",
-								borderRadius: "20px",
-								textTransform: "none",
-								paddingX: 3,
-								fontWeight: "bold",
-								"&:hover": {
-									backgroundColor: "#5E6F1A",
-									color: "#fff",
-								},
-							}}
-						>
-							Login
-						</Button>
+
+						{/* Login and Logout button */}
+						{!auth.isLogin ? (
+							<Button
+								variant="contained"
+								onClick={() => setSignin(true)}
+								sx={{
+									backgroundColor: "#fff",
+									color: "#435A12",
+									borderRadius: "20px",
+									textTransform: "none",
+									paddingX: 3,
+									fontWeight: "bold",
+									"&:hover": {
+										backgroundColor: "#5E6F1A",
+										color: "#fff",
+									},
+								}}
+							>
+								Login
+							</Button>
+						) : (
+							<Button
+								variant="contained"
+								onClick={handleLogout}
+								sx={{
+									backgroundColor: "#fff",
+									color: "#435A12",
+									borderRadius: "20px",
+									textTransform: "none",
+									paddingX: 3,
+									fontWeight: "bold",
+									"&:hover": {
+										backgroundColor: "#5E6F1A",
+										color: "#fff",
+									},
+								}}
+							>
+								Logout
+							</Button>
+						)}
 					</Stack>
 				</Toolbar>
 			</AppBar>
@@ -115,6 +172,22 @@ export default function Navbar() {
 				onClose={() => setSignin(false)}
 				onSave={handleLogin}
 			/>
+
+			{/* Snackbar toast */}
+			<Snackbar
+				open={snackbar.open}
+				autoHideDuration={4000}
+				onClose={handleClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert
+					onClose={handleClose}
+					severity={snackbar.severity}
+					sx={{ width: "100%" }}
+				>
+					{snackbar.message}
+				</Alert>
+			</Snackbar>
 		</>
 	);
 }

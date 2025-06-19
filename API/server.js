@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(logger);
 
 // Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/protected", protectedRoutes);
+app.use("/auth", authRoutes);
+app.use("/protected", protectedRoutes);
 
 app.get("/", (req, res) =>
 	res.json({

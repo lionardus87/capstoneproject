@@ -1,5 +1,5 @@
 import { createContext, useEffect, useReducer } from "react";
-import { loginRequest } from "../API/authAPI";
+import { fetchUserWithToken } from "../API/authAPI";
 
 export const AuthContext = createContext();
 
@@ -34,10 +34,12 @@ export const AuthProvider = ({ children }) => {
 	useEffect(() => {
 		const autoLogin = async () => {
 			const accessToken = sessionStorage.getItem("accessToken");
+			const refreshToken = sessionStorage.getItem("refreshToken");
+
 			if (accessToken) {
 				try {
-					const user = await loginRequest();
-					dispatch({ type: "signIn", payload: { user, accessToken } });
+					const user = await fetchUserWithToken();
+					dispatch({ type: "signIn", payload: { user, accessToken, refreshToken } });
 				} catch (err) {
 					console.error("Auto-login failed:", err);
 					dispatch({ type: "signOut" });

@@ -1,36 +1,56 @@
 import axios from "axios";
 
-const APIurl = "http://localhost:3003/api/auth";
+export const registerUser = async ({ username, email, password }) => {
+	try {
+		const response = await axios.post("http://localhost:3003/auth/register", {
+			username,
+			email,
+			password,
+		});
+		return { success: true, data: response.data };
+	} catch (error) {
+		return { success: false, message: error.response?.data || error.message };
+	}
+};
 
 export const loginRequest = async ({ identifier, password }) => {
 	try {
-		const token = sessionStorage.getItem("accessToken");
-		const response = await axios.post(
-			`${APIurl}/login`,
-			{
-				identifier,
-				password,
-			},
-			{
-				headers: { Authorization: `Bearer ${token}` },
-			}
-		);
-		const result = await apiProcess(response);
+		const result = await axios.post("http://localhost:3003/auth/login", {
+			identifier,
+			password,
+		});
+		// return result.data;
 		return { success: true, ...result.data };
 	} catch (err) {
+		console.error("loginRequest error:", err);
 		return {
 			success: false,
 			message: err.response?.data?.message || err.message || "Login failed",
 		};
 	}
 };
+export const fetchUserWithToken = async () => {
+	const accessToken = sessionStorage.getItem("accessToken");
+	if (!accessToken) throw new Error("No access token found");
+
+	const request = axios.request("http://localhost:3003/auth/me", {
+		headers: { Authorization: `Bearer ${accessToken}` },
+	});
+	const result = await apiProcess(request);
+	return result;
+};
 
 export const getAccessToken = async () => {
-	const token = sessionStorage.getItem("refreshToken");
-	const result = await axios.get(`${APIurl}/accessToken`, {
-		headers: { Authorization: `Bearer ${token}` },
-	});
-	sessionStorage.setItem("accessToken", result.data.accessToken);
+	try {
+		const token = sessionStorage.getItem("refreshToken");
+		const result = await axios.get("http://localhost:3003/auth/accessToken", {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		sessionStorage.setItem("accessToken", result.data.accessToken);
+	} catch (err) {
+		console.error("Failed to refresh access token:", err);
+		throw err;
+	}
 };
 
 export const apiProcess = async (request) => {
@@ -56,26 +76,3 @@ export const apiProcess = async (request) => {
 
 	return await execute();
 };
-
-export const registerUser = async ({ username, email, password }) => {
-	try {
-		const response = await axios.post(`${APIurl}/register`, {
-			username,
-			email,
-			password,
-		});
-		return { success: true, data: response.data };
-	} catch (error) {
-		return { success: false, message: error.response?.data || error.message };
-	}
-};
-
-// export const getLoginedUser = async () => {
-// 	const token = sessionStorage.getItem("accessToken");
-// 	const request = axios.request(`${APIurl}/me`, {
-// 		headers: { Authorization: `Bearer ${token}` },
-// 	});
-
-// 	const result = await apiProcess(request);
-// 	return result;
-// };

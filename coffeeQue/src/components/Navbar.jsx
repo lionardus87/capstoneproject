@@ -46,7 +46,8 @@ export default function Navbar() {
 	const handleLogout = () => {
 		authDispatch({ type: "signOut" });
 		showSnackbar("Logout successful", "success");
-		navigate("/"); // optional: redirect to home after logout
+		console.log(sessionStorage);
+		navigate("/");
 	};
 
 	// Order button logic
@@ -55,7 +56,7 @@ export default function Navbar() {
 			setSignin(true); // Show login modal
 			showSnackbar("Please login to place an order", "info");
 		} else {
-			navigate("/order"); // Or whatever page you want
+			navigate("/order");
 		}
 	};
 

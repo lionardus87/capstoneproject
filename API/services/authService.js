@@ -1,29 +1,30 @@
 const axios = require("axios");
 let User = require("../models/User");
+const bcrypt = require("bcrypt");
 
-const findUserByEmail = async (emailId) => {
-	const response = await axios.get(
-		`http://localhost:3003/api/auth?emailId=${emailId}`
-	);
-	return response.data;
+const findUser = async (info) => {
+	return await User.findOne(info).exec();
 };
 
-const createUser = async (userData) => {
-	const user = await new User(userData).save();
+const createUser = async (userBody) => {
+	const user = await new User(userBody).save();
 	return user;
 };
 
-const checkPassword = async (userData) => {
-	const { email, username, password } = userData;
+const checkPassword = async ({ email, username, password }) => {
+	const query = email ? { email } : { username };
+	// console.log("Checking for user:", query);
 
-	if (!email && !username) return null;
+	const user = await User.findOne(query);
+	if (!user) {
+		// console.log("User not found");
+		return null;
+	}
 
-	const response = await axios.post(
-		"http://localhost:3003/api/auth/checkPassword",
-		{ email, username, password }
-	);
+	const isValid = await bcrypt.compare(password, user.password);
+	// console.log("Password valid:", isValid);
 
-	return response.data;
+	return isValid ? user : null;
 };
 
-module.exports = { findUserByEmail, createUser, checkPassword };
+module.exports = { findUser, createUser, checkPassword };

@@ -24,7 +24,7 @@ export default function Footer() {
 				<Container maxWidth="lg">
 					<Grid container spacing={12} justifyContent={"center"}>
 						{/* Quick Links */}
-						<Grid item xs={12} md={4}>
+						<Grid>
 							<Typography
 								variant="h6"
 								gutterbottom="true"
@@ -46,7 +46,7 @@ export default function Footer() {
 						</Grid>
 
 						{/* Products */}
-						<Grid item xs={12} md={4}>
+						<Grid>
 							<Typography
 								variant="h6"
 								gutterbottom="true"
@@ -65,7 +65,7 @@ export default function Footer() {
 						</Grid>
 
 						{/* Contact Info */}
-						<Grid item xs={12} md={4}>
+						<Grid>
 							<Typography
 								variant="h6"
 								gutterbottom="true"

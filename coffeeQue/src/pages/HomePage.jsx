@@ -176,7 +176,7 @@ export default function HomePage() {
 					</Typography>
 					<Grid container spacing={4} justifyContent="center" sx={{ mt: 2 }}>
 						{products.map((product, index) => (
-							<Grid item xs={12} sm={6} key={index}>
+							<Grid key={index}>
 								<Card
 									elevation={3}
 									sx={{

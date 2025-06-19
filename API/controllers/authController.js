@@ -1,5 +1,5 @@
 const {
-	findUserByEmail,
+	findUser,
 	createUser,
 	checkPassword,
 } = require("../services/authService");
@@ -9,34 +9,44 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
-	const existing = await findUserByEmail(email);
+	console.log("Register payload:", userBody);
 
-	if (existing?.length > 0) return null;
+	//Check for existing user
+	const existingUser = await findUser({ $or: [{ username }, { email }] });
+	console.log("Existing user?", existingUser);
+	if (existingUser) return null;
 
+	//Hash and save
 	const hashedPassword = await bcrypt.hash(password, 10);
-	const userData = await createUser({
+	const user = await createUser({
 		username,
 		email,
 		password: hashedPassword,
 	});
-
-	return userData;
+	console.log("New user created:", user);
+	return user;
 };
 
 const login = async ({ identifier, password }) => {
-	let user;
+	if (!identifier || !password)
+		return { error: "Username and password are required." };
 
-	// Check if identifier is an email or username
-	if (identifier.includes("@")) {
-		user = await checkPassword({ email: identifier, password });
-	} else {
-		user = await checkPassword({ username: identifier, password });
-	}
+	// Find and validate
+	const info = identifier.includes("@")
+		? { email: identifier, password }
+		: { username: identifier, password };
+	const user = await checkPassword(info);
+	if (!user) return { error: "Invalid username or email." };
 
-	if (!user) return null;
+	// const info = identifier.includes("@")
+	// 	? { email: identifier }
+	// 	: { username: identifier };
 
-	const isValid = await bcrypt.compare(password, user.password);
-	if (!isValid) return null;
+	// const user = await findUser(info);
+	// if (!user) return { error: "Invalid username or email." };
+
+	// const isValid = await bcrypt.compare(password, user.password);
+	// if (!isValid) return { error: "Invalid password." };
 
 	const payload = {
 		id: user._id,

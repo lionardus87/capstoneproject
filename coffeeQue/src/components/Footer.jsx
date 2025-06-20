@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Box, Grid, Typography, Link, Stack, Container } from "@mui/material";
 import SignupModal from "./SignupModal";
+import { Link as RouterLink } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function Footer() {
 	const [signup, setSignup] = useState(false);
-	const handleSignup = async (formData) => {
-		console.log("Signup submitted from footer:", formData);
-		// Simulate success response
-		return { success: true };
-	};
+	const { auth } = useContext(AuthContext);
+	const userRole = auth.user?.role || sessionStorage.getItem("userRole");
 
 	return (
 		<>
@@ -42,6 +41,16 @@ export default function Footer() {
 								<Link onClick={() => setSignup(true)} underline="hover" color="#DCE5D2">
 									Join Us
 								</Link>
+								{auth.isLogin && userRole?.toLowerCase() === "member" && (
+									<Link
+										component={RouterLink}
+										to="/venue"
+										underline="hover"
+										color="#DCE5D2"
+									>
+										Register my venue
+									</Link>
+								)}
 							</Stack>
 						</Grid>
 
@@ -93,11 +102,7 @@ export default function Footer() {
 				</Container>
 			</Box>
 			{/* Signup Modal */}
-			<SignupModal
-				open={signup}
-				onClose={() => setSignup(false)}
-				onSave={handleSignup}
-			/>
+			<SignupModal open={signup} onClose={() => setSignup(false)} />
 		</>
 	);
 }

@@ -1,6 +1,8 @@
 const {
 	findUser,
+	findVenue,
 	createUser,
+	createVenue,
 	checkPassword,
 } = require("../services/authService");
 const bcrypt = require("bcrypt");
@@ -9,11 +11,11 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
-	console.log("Register payload:", userBody);
+	// console.log("Register payload:", userBody);
 
 	//Check for existing user
 	const existingUser = await findUser({ $or: [{ username }, { email }] });
-	console.log("Existing user?", existingUser);
+	// console.log("Existing user?", existingUser);
 	if (existingUser) return null;
 
 	//Hash and save
@@ -23,8 +25,32 @@ const register = async (userBody) => {
 		email,
 		password: hashedPassword,
 	});
-	console.log("New user created:", user);
+	// console.log("New user created:", user);
 	return user;
+};
+
+const registerVenue = async (venueData, userId) => {
+	const { venueName, city, postcode, logoUrl } = venueData;
+	console.log("Register payload:", venueData);
+	console.log("Register payload:", userId);
+
+	//Check for existing venue
+	const existingVenue = await findVenue({ venueName });
+
+	if (existingVenue) {
+		console.log("Venue name already taken in Venue collection.");
+		return { error: "Venue namealready taken" };
+	}
+
+	const venue = await createVenue({
+		venueName,
+		city,
+		postcode,
+		logoUrl,
+		admin: userId,
+	});
+	console.log("New venue created:", venue);
+	return venue;
 };
 
 const login = async ({ identifier, password }) => {
@@ -38,18 +64,8 @@ const login = async ({ identifier, password }) => {
 	const user = await checkPassword(info);
 	if (!user) return { error: "Invalid username or email." };
 
-	// const info = identifier.includes("@")
-	// 	? { email: identifier }
-	// 	: { username: identifier };
-
-	// const user = await findUser(info);
-	// if (!user) return { error: "Invalid username or email." };
-
-	// const isValid = await bcrypt.compare(password, user.password);
-	// if (!isValid) return { error: "Invalid password." };
-
 	const payload = {
-		id: user._id,
+		_id: user._id,
 		username: user.username,
 		email: user.email,
 		role: user.role,
@@ -68,4 +84,4 @@ const generateAccessToken = async (refreshToken) => {
 	return jwt.sign(payload, privateKey, { expiresIn: "3h" });
 };
 
-module.exports = { register, login, generateAccessToken };
+module.exports = { register, registerVenue, login, generateAccessToken };

@@ -2,13 +2,18 @@ import React, { useState, useContext } from "react";
 import {
 	AppBar,
 	Toolbar,
-	Button,
 	Stack,
 	ButtonBase,
 	Box,
 	Snackbar,
 	Alert,
+	Menu,
+	MenuItem,
+	IconButton,
+	Typography,
+	Button,
 } from "@mui/material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginModal from "./LoginModal";
 import { useNavigate } from "react-router";
 import logo from "../assets/CQ.png";
@@ -18,9 +23,12 @@ import useSnackbar from "../hooks/useSnackbar";
 
 export default function Navbar() {
 	const [signin, setSignin] = useState(false);
+	const [anchorEl, setAnchorEl] = useState(null);
 	const navigate = useNavigate();
 	const { auth, authDispatch } = useContext(AuthContext);
 	const { snackbar, showSnackbar, handleClose } = useSnackbar();
+
+	const isMenuOpen = Boolean(anchorEl);
 
 	// Login logic
 	const handleLogin = async (formData) => {
@@ -45,19 +53,23 @@ export default function Navbar() {
 	// Logout logic
 	const handleLogout = () => {
 		authDispatch({ type: "signOut" });
+		handleMenuClose();
 		showSnackbar("Logout successful", "success");
-		console.log(sessionStorage);
 		navigate("/");
 	};
 
-	// Order button logic
-	const handleOrderClick = () => {
-		if (!auth.isLogin) {
-			setSignin(true); // Show login modal
-			showSnackbar("Please login to place an order", "info");
-		} else {
-			navigate("/order");
-		}
+	// Menu actions
+	const handleMenuClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+
+	const handleMenuClose = () => {
+		setAnchorEl(null);
+	};
+
+	const handleNavigate = (path) => {
+		navigate(path);
+		handleMenuClose();
 	};
 
 	return (
@@ -80,71 +92,18 @@ export default function Navbar() {
 							sx={{ height: 50, mr: 2, borderRadius: "50%", objectFit: "cover" }}
 						/>
 					</ButtonBase>
-					{/* <Button
-						onClick={() => navigate("/")}
-						variant="h6"
-						sx={{
-							fontWeight: "bold",
-							fontFamily: "'Playfair Display', serif",
-							color: "#435A12",
-						}}
-					>
-						CoffeeQue
-					</Button> */}
 
-					{/* <Stack direction="row" spacing={3} alignItems="center">
-						{["Home", "Products", "ContactUs"].map((item, index) => (
-							<Button
-								key={index}
-								disableRipple
-								sx={{
-									textTransform: "none",
-									color: "#435A12",
-									fontWeight: item === "Home" ? "bold" : "normal",
-									borderBottom: item === "Home" ? "2px solid #B6CA93" : "none",
-									borderRadius: 0,
-									fontFamily: "inherit",
-									"&:hover": {
-										backgroundColor: "transparent",
-										borderBottom: "2px solid #B6CA93",
-									},
-								}}
-							>
-								{item}
-							</Button>
-						))}
-					</Stack> */}
-
-					<Stack direction="row" spacing={2}>
-						<Button
-							variant="contained"
-							onClick={handleOrderClick}
-							sx={{
-								backgroundColor: "#7E8E20",
-								color: "#fff",
-								borderRadius: "20px",
-								textTransform: "none",
-								paddingX: 3,
-								fontWeight: "bold",
-								"&:hover": {
-									backgroundColor: "#5E6F1A",
-								},
-							}}
-						>
-							Order now
-						</Button>
-
-						{/* Login and Logout button */}
+					<Stack direction="row" spacing={2} alignItems="center">
 						{!auth.isLogin ? (
 							<Button
-								variant="contained"
+								startIcon={<AccountCircleIcon />}
 								onClick={() => setSignin(true)}
 								sx={{
 									backgroundColor: "#fff",
 									color: "#435A12",
 									borderRadius: "20px",
 									textTransform: "none",
-									paddingX: 3,
+									paddingX: 2,
 									fontWeight: "bold",
 									"&:hover": {
 										backgroundColor: "#5E6F1A",
@@ -155,28 +114,64 @@ export default function Navbar() {
 								Login
 							</Button>
 						) : (
-							<Button
-								variant="contained"
-								onClick={handleLogout}
-								sx={{
-									backgroundColor: "#fff",
-									color: "#435A12",
-									borderRadius: "20px",
-									textTransform: "none",
-									paddingX: 3,
-									fontWeight: "bold",
-									"&:hover": {
-										backgroundColor: "#5E6F1A",
-										color: "#fff",
-									},
-								}}
-							>
-								Logout
-							</Button>
+							<>
+								<IconButton
+									onClick={handleMenuClick}
+									sx={{ color: "#435A12" }}
+									size="large"
+								>
+									<AccountCircleIcon fontSize="large" />
+								</IconButton>
+								<Typography
+									onClick={handleMenuClick}
+									sx={{
+										cursor: "pointer",
+										fontWeight: "bold",
+										color: "#435A12",
+									}}
+								>
+									{auth.user?.username || "User"}
+								</Typography>
+							</>
 						)}
 					</Stack>
 				</Toolbar>
 			</AppBar>
+
+			{/* User menu */}
+			<Menu
+				anchorEl={anchorEl}
+				open={isMenuOpen}
+				onClose={handleMenuClose}
+				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+				transformOrigin={{ vertical: "top", horizontal: "right" }}
+			>
+				{auth.isLogin &&
+					auth.user?.role === "admin" && [
+						<MenuItem key="list" onClick={() => handleNavigate("/menu-list")}>
+							List Menu
+						</MenuItem>,
+						<MenuItem key="add" onClick={() => handleNavigate("/add-menu")}>
+							Add Menu
+						</MenuItem>,
+						<MenuItem key="logout" onClick={handleLogout}>
+							Logout
+						</MenuItem>,
+					]}
+
+				{auth.isLogin &&
+					auth.user?.role === "member" && [
+						<MenuItem key="orders" onClick={() => handleNavigate("/order-now")}>
+							Order Now
+						</MenuItem>,
+						<MenuItem key="status" onClick={() => handleNavigate("/order-status")}>
+							Order Status
+						</MenuItem>,
+						<MenuItem key="logout" onClick={handleLogout}>
+							Logout
+						</MenuItem>,
+					]}
+			</Menu>
 
 			{/* Login Modal */}
 			<LoginModal

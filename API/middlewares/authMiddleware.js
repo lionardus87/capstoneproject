@@ -2,16 +2,20 @@ const jwt = require("jsonwebtoken");
 const { privateKey, refreshTokenKey } = require("../utils/const");
 
 const authMiddleWare = (req, res, next) => {
-	const token = req.headers.authorization?.replace("Bearer ", "");
-	if (!token) return res.status(401).send("Missing access token");
+	const authHeader = req.headers.authorization;
+	if (!authHeader || !authHeader.startsWith("Bearer ")) {
+		return res.status(401).send("No token provided");
+	}
+
+	const token = authHeader.split(" ")[1];
 
 	try {
 		const decoded = jwt.verify(token, privateKey);
-		req.loginUser = decoded;
+		req.user = decoded;
 		next();
 	} catch (err) {
-		console.error(err);
-		res.status(403).send("Invalid access token");
+		console.error("authMiddleware error:", err);
+		return res.status(401).send("Invalid or expired token");
 	}
 };
 

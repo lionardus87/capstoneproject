@@ -16,7 +16,16 @@ function reducer(state, action) {
 			const { user, accessToken, refreshToken } = action.payload;
 			if (accessToken) sessionStorage.setItem("accessToken", accessToken);
 			if (refreshToken) sessionStorage.setItem("refreshToken", refreshToken);
-			return { ...state, user, accessToken, refreshToken, isLogin: true };
+			if (user?.role) sessionStorage.setItem("userRole", user.role);
+
+			return {
+				...state,
+				user,
+				accessToken,
+				refreshToken,
+				isLogin: true,
+				userRole: user?.role,
+			};
 		}
 		case "signOut": {
 			sessionStorage.removeItem("accessToken");
@@ -39,7 +48,11 @@ export const AuthProvider = ({ children }) => {
 			if (accessToken) {
 				try {
 					const user = await fetchUserWithToken();
-					dispatch({ type: "signIn", payload: { user, accessToken, refreshToken } });
+
+					dispatch({
+						type: "signIn",
+						payload: { user, accessToken, refreshToken },
+					});
 				} catch (err) {
 					console.error("Auto-login failed:", err);
 					dispatch({ type: "signOut" });

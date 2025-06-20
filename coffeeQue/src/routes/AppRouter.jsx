@@ -4,6 +4,12 @@ import Footer from "../components/Footer";
 import HomePage from "../pages/HomePage";
 import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
+import RegisterVenuePage from "../pages/RegisterVenuePage";
+import RegisterMenuPage from "../pages/AddMenuItem";
+import AddMenuItemPage from "../pages/AddMenuItem";
+import MenuListPage from "../pages/MenuListPage";
+import OrderNowPage from "../pages/OrderNowPage";
+import OrderStatusPage from "../pages/OrderStatusPage";
 
 export default function AppRouter() {
 	return (
@@ -13,6 +19,11 @@ export default function AppRouter() {
 				<Route path="/" element={<HomePage />} />
 				<Route path="/about" element={<AboutPage />} />
 				<Route path="/contact" element={<ContactPage />} />
+				<Route path="/venue" element={<RegisterVenuePage />} />
+				<Route path="/addmenu" element={<AddMenuItemPage />} />
+				<Route path="/menu" element={<MenuListPage />} />
+				<Route path="/order-now" element={<OrderNowPage />} />
+				<Route path="/order-status" element={<OrderStatusPage />} />
 			</Routes>
 			<Footer></Footer>
 		</BrowserRouter>

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
 	register,
+	registerVenue,
 	login,
 	generateAccessToken,
 } = require("../controllers/authController");
@@ -16,6 +17,25 @@ router.post("/register", async (req, res) => {
 		const user = await register(req.body);
 		if (!user) return res.status(409).send("User already exists");
 		res.status(201).json(user);
+	} catch (err) {
+		console.error("Registration error:", err);
+		res.status(500).send("Register failed");
+	}
+});
+
+//Register Venue
+router.post("/registervenue", authMiddleWare, async (req, res) => {
+	console.log("Login payload:", req.body);
+	try {
+		const userId = req.user?._id;
+		console.log("Venue router response:", userId);
+		if (!userId) return res.status(401).send("Unauthorized");
+
+		const venue = await registerVenue(req.body, userId);
+		console.log("Venue router response:", venue);
+
+		if (venue?.error) return res.status(409).send(venue.error);
+		res.status(201).json(venue);
 	} catch (err) {
 		console.error("Registration error:", err);
 		res.status(500).send("Register failed");
@@ -52,7 +72,7 @@ router.get("/accessToken", refreshTokenMiddleWare, async (req, res) => {
 
 //GET
 router.get("/me", authMiddleWare, async (req, res) => {
-	res.status(200).json(req.loginUser);
+	res.status(200).json(req.user);
 });
 
 // GET user by email

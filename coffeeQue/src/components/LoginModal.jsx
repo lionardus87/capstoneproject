@@ -36,8 +36,7 @@ export default function LoginModal({ open, onClose }) {
 			return;
 		}
 		try {
-			const result = await loginRequest(formData); // { success, user, accessToken, refreshToken, message }
-
+			const result = await loginRequest(formData);
 			if (result.success) {
 				authDispatch({
 					type: "signIn",
@@ -49,7 +48,7 @@ export default function LoginModal({ open, onClose }) {
 				});
 				showSnackbar("Login successful!", "success");
 				onClose();
-				setFormData({ identifier: "", password: "" }); // reset form
+				setFormData({ identifier: "", password: "" });
 			} else {
 				showSnackbar(
 					"Login failed: " + (result.message || "Unknown error"),

@@ -8,6 +8,7 @@ const errorHandler = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/authRoute");
 const protectedRoutes = require("./routes/protectedRoute");
+const venueRoutes = require("./routes/venueRoute");
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ app.use(logger);
 // Routes
 app.use("/auth", authRoutes);
 app.use("/protected", protectedRoutes);
+app.use("/api", venueRoutes);
 
 app.get("/", (req, res) =>
 	res.json({

@@ -4,6 +4,7 @@ const {
 	createUser,
 	createVenue,
 	checkPassword,
+	updateUserRole,
 } = require("../services/authService");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -49,6 +50,7 @@ const registerVenue = async (venueData, userId) => {
 		logoUrl,
 		admin: userId,
 	});
+	const updateRole = await updateUserRole(userId, "admin");
 	console.log("New venue created:", venue);
 	return venue;
 };

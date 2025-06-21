@@ -147,9 +147,9 @@ export default function Navbar() {
 				transformOrigin={{ vertical: "top", horizontal: "right" }}
 			>
 				{auth.isLogin &&
-					auth.user?.role === "admin" && [
+					auth.userRole === "admin" && [
 						<MenuItem key="list" onClick={() => handleNavigate("/menu-list")}>
-							List Menu
+							Menu
 						</MenuItem>,
 						<MenuItem key="add" onClick={() => handleNavigate("/add-menu")}>
 							Add Menu
@@ -160,7 +160,7 @@ export default function Navbar() {
 					]}
 
 				{auth.isLogin &&
-					auth.user?.role === "member" && [
+					auth.userRole === "member" && [
 						<MenuItem key="orders" onClick={() => handleNavigate("/order-now")}>
 							Order Now
 						</MenuItem>,

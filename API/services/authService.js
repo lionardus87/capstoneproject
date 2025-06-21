@@ -22,6 +22,11 @@ const createVenue = async (venueData) => {
 	return user;
 };
 
+const updateUserRole = async (userId, role = "admin") => {
+	const user = await User.findByIdAndUpdate(userId, { role }, { new: true });
+	return user;
+};
+
 const checkPassword = async ({ email, username, password }) => {
 	const query = email ? { email } : { username };
 	// console.log("Checking for user:", query);
@@ -44,4 +49,5 @@ module.exports = {
 	createVenue,
 	createUser,
 	checkPassword,
+	updateUserRole,
 };

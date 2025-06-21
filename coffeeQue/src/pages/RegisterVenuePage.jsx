@@ -75,7 +75,7 @@ export default function RegisterVenuePage() {
 				logoUrl,
 			});
 			if (result?.success) {
-				showSnackbar("Signup successful!", "success");
+				showSnackbar("Registration successful!", "success");
 				setFormData({
 					venueName: "",
 					city: "",
@@ -83,11 +83,11 @@ export default function RegisterVenuePage() {
 					logoUrl: "",
 				});
 			} else {
-				showSnackbar("Signup failed. Try a different email or username.", "error");
+				showSnackbar("Registration failed.", "error");
 			}
 		} catch (error) {
 			showSnackbar(
-				"Signup failed: " + (error?.message || "Server error"),
+				"Registration failed: " + (error?.message || "Server error"),
 				"error"
 			);
 		}

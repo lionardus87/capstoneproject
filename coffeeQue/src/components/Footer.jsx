@@ -7,7 +7,6 @@ import { AuthContext } from "../contexts/AuthContext";
 export default function Footer() {
 	const [signup, setSignup] = useState(false);
 	const { auth } = useContext(AuthContext);
-	const userRole = auth.user?.role || sessionStorage.getItem("userRole");
 
 	return (
 		<>
@@ -41,7 +40,7 @@ export default function Footer() {
 								<Link onClick={() => setSignup(true)} underline="hover" color="#DCE5D2">
 									Join Us
 								</Link>
-								{auth.isLogin && userRole?.toLowerCase() === "member" && (
+								{auth.isLogin && auth.userRole === "member" && (
 									<Link
 										component={RouterLink}
 										to="/venue"

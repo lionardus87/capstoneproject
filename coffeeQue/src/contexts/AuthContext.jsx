@@ -8,6 +8,7 @@ const initialState = {
 	accessToken: null,
 	refreshToken: null,
 	isLogin: false,
+	userRole: null,
 };
 
 function reducer(state, action) {
@@ -24,7 +25,7 @@ function reducer(state, action) {
 				accessToken,
 				refreshToken,
 				isLogin: true,
-				userRole: user?.role,
+				userRole: user?.role || null,
 			};
 		}
 		case "signOut": {

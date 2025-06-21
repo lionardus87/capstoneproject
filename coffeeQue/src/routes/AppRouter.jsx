@@ -20,8 +20,8 @@ export default function AppRouter() {
 				<Route path="/about" element={<AboutPage />} />
 				<Route path="/contact" element={<ContactPage />} />
 				<Route path="/venue" element={<RegisterVenuePage />} />
-				<Route path="/addmenu" element={<AddMenuItemPage />} />
-				<Route path="/menu" element={<MenuListPage />} />
+				<Route path="/add-menu" element={<AddMenuItemPage />} />
+				<Route path="/menu-list" element={<MenuListPage />} />
 				<Route path="/order-now" element={<OrderNowPage />} />
 				<Route path="/order-status" element={<OrderStatusPage />} />
 			</Routes>

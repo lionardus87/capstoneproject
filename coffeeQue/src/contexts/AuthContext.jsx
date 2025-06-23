@@ -1,14 +1,16 @@
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useEffect, useReducer, useContext } from "react";
 import { fetchUserWithToken } from "../API/authAPI";
 
 export const AuthContext = createContext();
+export const useAuth = () => useContext(AuthContext);
 
 const initialState = {
 	user: null,
 	accessToken: null,
 	refreshToken: null,
 	isLogin: false,
-	userRole: null,
+	isLoading: true,
+	// userRole: null,
 };
 
 function reducer(state, action) {
@@ -17,7 +19,7 @@ function reducer(state, action) {
 			const { user, accessToken, refreshToken } = action.payload;
 			if (accessToken) sessionStorage.setItem("accessToken", accessToken);
 			if (refreshToken) sessionStorage.setItem("refreshToken", refreshToken);
-			if (user?.role) sessionStorage.setItem("userRole", user.role);
+			// if (user?.role) sessionStorage.setItem("userRole", user.role);
 
 			return {
 				...state,
@@ -25,13 +27,17 @@ function reducer(state, action) {
 				accessToken,
 				refreshToken,
 				isLogin: true,
-				userRole: user?.role || null,
+				isLoading: false,
+				// userRole: user?.role || null,
 			};
 		}
 		case "signOut": {
 			sessionStorage.removeItem("accessToken");
 			sessionStorage.removeItem("refreshToken");
 			return { ...initialState };
+		}
+		case "finishLoading": {
+			return { ...state, isLoading: false };
 		}
 		default:
 			return state;
@@ -58,6 +64,9 @@ export const AuthProvider = ({ children }) => {
 					console.error("Auto-login failed:", err);
 					dispatch({ type: "signOut" });
 				}
+			} else {
+				// No token present → we’re done – user is a guest
+				dispatch({ type: "finishLoading" });
 			}
 		};
 		autoLogin();

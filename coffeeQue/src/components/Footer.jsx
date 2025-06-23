@@ -40,10 +40,10 @@ export default function Footer() {
 								<Link onClick={() => setSignup(true)} underline="hover" color="#DCE5D2">
 									Join Us
 								</Link>
-								{auth.isLogin && auth.userRole === "member" && (
+								{auth.isLogin && auth.user.role === "member" && (
 									<Link
 										component={RouterLink}
-										to="/venue"
+										to="/register-venue"
 										underline="hover"
 										color="#DCE5D2"
 									>
@@ -63,11 +63,15 @@ export default function Footer() {
 								Products
 							</Typography>
 							<Stack spacing={1}>
-								<Link href="#coffee" underline="hover" color="#DCE5D2">
-									Coffee
+								<Link
+									href="/venues/:venueId/products"
+									underline="hover"
+									color="#DCE5D2"
+								>
+									Products
 								</Link>
-								<Link href="#food" underline="hover" color="#DCE5D2">
-									Food
+								<Link href="/venues" underline="hover" color="#DCE5D2">
+									Venues
 								</Link>
 							</Stack>
 						</Grid>

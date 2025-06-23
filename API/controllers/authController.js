@@ -4,6 +4,7 @@ const {
 	createUser,
 	createVenue,
 	checkPassword,
+	findAdminVenue,
 	updateUserRole,
 } = require("../services/authService");
 const bcrypt = require("bcrypt");
@@ -40,7 +41,7 @@ const registerVenue = async (venueData, userId) => {
 
 	if (existingVenue) {
 		console.log("Venue name already taken in Venue collection.");
-		return { error: "Venue namealready taken" };
+		return { error: "Venue name already taken" };
 	}
 
 	const venue = await createVenue({
@@ -72,6 +73,12 @@ const login = async ({ identifier, password }) => {
 		email: user.email,
 		role: user.role,
 	};
+
+	if (user.role === "admin") {
+		const venue = await findAdminVenue(user._id);
+		payload.venueId = venue?._id;
+	}
+
 	const accessToken = jwt.sign(payload, privateKey, { expiresIn: "3h" });
 	const refreshToken = jwt.sign(payload, refreshTokenKey, { expiresIn: "1d" });
 

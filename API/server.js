@@ -8,7 +8,8 @@ const errorHandler = require("./middlewares/errorHandler");
 
 const authRoutes = require("./routes/authRoute");
 const protectedRoutes = require("./routes/protectedRoute");
-const venueRoutes = require("./routes/venueRoute");
+const adminRoutes = require("./routes/adminRoute");
+const publicRoutes = require("./routes/publicRoute");
 
 dotenv.config();
 const app = express();
@@ -22,9 +23,10 @@ app.use(express.json());
 app.use(logger);
 
 // Routes
-app.use("/auth", authRoutes);
-app.use("/protected", protectedRoutes);
-app.use("/api", venueRoutes);
+app.use("/auth", authRoutes); //authentication
+app.use("/protected", protectedRoutes); //Role test routes
+app.use("/", publicRoutes); //Public venues/products
+app.use("/admin", adminRoutes); //Admin
 
 app.get("/", (req, res) =>
 	res.json({

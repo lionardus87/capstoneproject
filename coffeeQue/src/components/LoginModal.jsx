@@ -16,27 +16,29 @@ import SignupModal from "./SignupModal";
 import useSnackbar from "../hooks/useSnackbar";
 import { AuthContext } from "../contexts/AuthContext";
 import { loginRequest } from "../API/authAPI";
+import { useForm } from "react-hook-form";
 
 export default function LoginModal({ open, onClose }) {
-	const [formData, setFormData] = useState({ identifier: "", password: "" });
+	// const [formData, setFormData] = useState({ identifier: "", password: "" });
 	const [signup, setSignup] = useState(false);
 	const { snackbar, showSnackbar, handleClose } = useSnackbar();
 	const { authDispatch } = useContext(AuthContext);
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+		reset,
+	} = useForm();
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
+	// const handleChange = (e) => {
+	// 	const { name, value } = e.target;
+	// 	setFormData((prev) => ({ ...prev, [name]: value }));
+	// };
 
 	//Login logic
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (!formData.identifier || !formData.password) {
-			showSnackbar("Username and password are required", "error");
-			return;
-		}
+	const onSubmit = async (data) => {
 		try {
-			const result = await loginRequest(formData);
+			const result = await loginRequest(data);
 			if (result.success) {
 				authDispatch({
 					type: "signIn",
@@ -48,7 +50,7 @@ export default function LoginModal({ open, onClose }) {
 				});
 				showSnackbar("Login successful!", "success");
 				onClose();
-				setFormData({ identifier: "", password: "" });
+				reset(); // Clear form
 			} else {
 				showSnackbar(
 					"Login failed: " + (result.message || "Unknown error"),
@@ -60,6 +62,37 @@ export default function LoginModal({ open, onClose }) {
 			console.error(e);
 		}
 	};
+	// const handleSubmit = async (e) => {
+	// 	e.preventDefault();
+	// 	if (!formData.identifier || !formData.password) {
+	// 		showSnackbar("Username and password are required", "error");
+	// 		return;
+	// 	}
+	// 	try {
+	// 		const result = await loginRequest(formData);
+	// 		if (result.success) {
+	// 			authDispatch({
+	// 				type: "signIn",
+	// 				payload: {
+	// 					user: result.user,
+	// 					accessToken: result.accessToken,
+	// 					refreshToken: result.refreshToken,
+	// 				},
+	// 			});
+	// 			showSnackbar("Login successful!", "success");
+	// 			onClose();
+	// 			setFormData({ identifier: "", password: "" });
+	// 		} else {
+	// 			showSnackbar(
+	// 				"Login failed: " + (result.message || "Unknown error"),
+	// 				"error"
+	// 			);
+	// 		}
+	// 	} catch (e) {
+	// 		showSnackbar("Login failed: " + (e.message || "Unexpected error"), "error");
+	// 		console.error(e);
+	// 	}
+	// };
 
 	return (
 		<>
@@ -80,6 +113,25 @@ export default function LoginModal({ open, onClose }) {
 						<Stack spacing={3}>
 							<TextField
 								label="Username or Email"
+								{...register("identifier", {
+									required: "Username or email is required",
+								})}
+								error={!!errors.identifier}
+								helperText={errors.identifier?.message}
+								fullWidth
+								sx={{ width: 400 }}
+							/>
+
+							<TextField
+								label="Password"
+								type="password"
+								{...register("password", { required: "Password is required" })}
+								error={!!errors.password}
+								helperText={errors.password?.message}
+								fullWidth
+							/>
+							{/* <TextField
+								label="Username or Email"
 								name="identifier"
 								fullWidth
 								variant="outlined"
@@ -95,7 +147,7 @@ export default function LoginModal({ open, onClose }) {
 								variant="outlined"
 								value={formData.password}
 								onChange={handleChange}
-							/>
+							/> */}
 						</Stack>
 					</Box>
 				</DialogContent>
@@ -116,7 +168,7 @@ export default function LoginModal({ open, onClose }) {
 					</Button>
 					<Button
 						variant="contained"
-						onClick={handleSubmit}
+						onClick={handleSubmit(onSubmit)}
 						sx={{
 							backgroundColor: "#7E8E20",
 							color: "#fff",

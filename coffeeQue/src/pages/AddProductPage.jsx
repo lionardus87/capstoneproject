@@ -11,11 +11,11 @@ import {
 	Alert,
 } from "@mui/material";
 import useSnackbar from "../hooks/useSnackbar";
-import { addMenu } from "../API/venueAPI";
+import { addProduct } from "../API/productAPI";
 
 const categories = ["Drinks", "Foods"];
 
-export default function AddMenuItemPage() {
+export default function AddProductPage() {
 	const [formData, setFormData] = useState({
 		itemName: "",
 		description: "",
@@ -48,7 +48,7 @@ export default function AddMenuItemPage() {
 			return;
 		}
 		try {
-			const result = await addMenu({
+			const result = await addProduct({
 				itemName,
 				description,
 				price,
@@ -86,7 +86,7 @@ export default function AddMenuItemPage() {
 						textAlign="center"
 						mb={4}
 					>
-						Add New Menu Item
+						Add New Product Item
 					</Typography>
 
 					<Stack spacing={3} sx={{ backgroundColor: "#fff", p: 4, borderRadius: 3 }}>
@@ -139,7 +139,7 @@ export default function AddMenuItemPage() {
 								"&:hover": { backgroundColor: "#5E6F1A" },
 							}}
 						>
-							Add Menu Item
+							Add Product
 						</Button>
 					</Stack>
 				</Container>

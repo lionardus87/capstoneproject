@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
 	AppBar,
 	Toolbar,
@@ -17,7 +17,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginModal from "./LoginModal";
 import { useNavigate } from "react-router";
 import logo from "../assets/CQ.png";
-import { AuthContext } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { loginRequest } from "../API/authAPI";
 import useSnackbar from "../hooks/useSnackbar";
 
@@ -25,10 +25,11 @@ export default function Navbar() {
 	const [signin, setSignin] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const navigate = useNavigate();
-	const { auth, authDispatch } = useContext(AuthContext);
+	const { auth, authDispatch } = useAuth();
 	const { snackbar, showSnackbar, handleClose } = useSnackbar();
 
 	const isMenuOpen = Boolean(anchorEl);
+	console.log("auth", auth);
 
 	// Login logic
 	const handleLogin = async (formData) => {
@@ -70,6 +71,47 @@ export default function Navbar() {
 	const handleNavigate = (path) => {
 		navigate(path);
 		handleMenuClose();
+	};
+
+	const getMenuItems = () => {
+		if (!auth.isLogin) return [];
+
+		const items = [];
+
+		if (auth.user.role === "admin" && auth.user?.venueId) {
+			items.push(
+				{
+					key: "menu",
+					label: "Menu",
+					onClick: () =>
+						handleNavigate(`/admin/venues/${auth.user.venueId}/products`),
+				},
+				{
+					key: "add",
+					label: "Add Product",
+					onClick: () => handleNavigate("/add-product"),
+				}
+			);
+		}
+
+		if (auth.user.role === "member") {
+			items.push(
+				{
+					key: "orders",
+					label: "Order Now",
+					onClick: () => handleNavigate("/order-now"),
+				},
+				{
+					key: "status",
+					label: "Order Status",
+					onClick: () => handleNavigate("/order-status"),
+				}
+			);
+		}
+
+		items.push({ key: "logout", label: "Logout", onClick: handleLogout });
+
+		return items;
 	};
 
 	return (
@@ -146,31 +188,11 @@ export default function Navbar() {
 				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
 				transformOrigin={{ vertical: "top", horizontal: "right" }}
 			>
-				{auth.isLogin &&
-					auth.userRole === "admin" && [
-						<MenuItem key="list" onClick={() => handleNavigate("/menu-list")}>
-							Menu
-						</MenuItem>,
-						<MenuItem key="add" onClick={() => handleNavigate("/add-menu")}>
-							Add Menu
-						</MenuItem>,
-						<MenuItem key="logout" onClick={handleLogout}>
-							Logout
-						</MenuItem>,
-					]}
-
-				{auth.isLogin &&
-					auth.userRole === "member" && [
-						<MenuItem key="orders" onClick={() => handleNavigate("/order-now")}>
-							Order Now
-						</MenuItem>,
-						<MenuItem key="status" onClick={() => handleNavigate("/order-status")}>
-							Order Status
-						</MenuItem>,
-						<MenuItem key="logout" onClick={handleLogout}>
-							Logout
-						</MenuItem>,
-					]}
+				{getMenuItems().map((item) => (
+					<MenuItem key={item.key} onClick={item.onClick}>
+						{item.label}
+					</MenuItem>
+				))}
 			</Menu>
 
 			{/* Login Modal */}

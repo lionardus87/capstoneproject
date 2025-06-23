@@ -17,6 +17,10 @@ const findVenue = async (info) => {
 	return await Venue.findOne(info).exec();
 };
 
+const findAdminVenue = async (adminId) => {
+	return await Venue.findOne({ admin: adminId }).exec();
+};
+
 const createVenue = async (venueData) => {
 	const user = await new Venue(venueData).save();
 	return user;
@@ -49,5 +53,6 @@ module.exports = {
 	createVenue,
 	createUser,
 	checkPassword,
+	findAdminVenue,
 	updateUserRole,
 };

@@ -13,11 +13,9 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
-	// console.log("Register payload:", userBody);
 
 	//Check for existing user
 	const existingUser = await findUser({ $or: [{ username }, { email }] });
-	// console.log("Existing user?", existingUser);
 	if (existingUser) return null;
 
 	//Hash and save
@@ -27,7 +25,6 @@ const register = async (userBody) => {
 		email,
 		password: hashedPassword,
 	});
-	// console.log("New user created:", user);
 	return user;
 };
 
@@ -40,7 +37,6 @@ const registerVenue = async (venueData, userId) => {
 	const existingVenue = await findVenue({ venueName });
 
 	if (existingVenue) {
-		console.log("Venue name already taken in Venue collection.");
 		return { error: "Venue name already taken" };
 	}
 
@@ -52,7 +48,6 @@ const registerVenue = async (venueData, userId) => {
 		admin: userId,
 	});
 	const updateRole = await updateUserRole(userId, "admin");
-	console.log("New venue created:", venue);
 	return venue;
 };
 

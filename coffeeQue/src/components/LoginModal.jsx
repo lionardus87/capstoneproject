@@ -57,46 +57,24 @@ export default function LoginModal({ open, onClose }) {
 					"error"
 				);
 			}
-		} catch (e) {
-			showSnackbar("Login failed: " + (e.message || "Unexpected error"), "error");
-			console.error(e);
+		} catch (error) {
+			showSnackbar(
+				"Login failed: " + (error.message || "Unexpected error"),
+				"error"
+			);
+			console.error(error);
 		}
 	};
-	// const handleSubmit = async (e) => {
-	// 	e.preventDefault();
-	// 	if (!formData.identifier || !formData.password) {
-	// 		showSnackbar("Username and password are required", "error");
-	// 		return;
-	// 	}
-	// 	try {
-	// 		const result = await loginRequest(formData);
-	// 		if (result.success) {
-	// 			authDispatch({
-	// 				type: "signIn",
-	// 				payload: {
-	// 					user: result.user,
-	// 					accessToken: result.accessToken,
-	// 					refreshToken: result.refreshToken,
-	// 				},
-	// 			});
-	// 			showSnackbar("Login successful!", "success");
-	// 			onClose();
-	// 			setFormData({ identifier: "", password: "" });
-	// 		} else {
-	// 			showSnackbar(
-	// 				"Login failed: " + (result.message || "Unknown error"),
-	// 				"error"
-	// 			);
-	// 		}
-	// 	} catch (e) {
-	// 		showSnackbar("Login failed: " + (e.message || "Unexpected error"), "error");
-	// 		console.error(e);
-	// 	}
-	// };
 
 	return (
 		<>
-			<Dialog open={open} onClose={onClose} disableScrollLock>
+			<Dialog
+				open={open}
+				onClose={onClose}
+				maxWidth="sm"
+				fullWidth
+				disableScrollLock
+			>
 				<DialogTitle
 					sx={{
 						backgroundColor: "#F7F9F3",

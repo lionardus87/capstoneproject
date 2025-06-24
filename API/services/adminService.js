@@ -19,10 +19,27 @@ const addProduct = async (productData) => {
 	const item = await new Product(productData).save();
 	return item;
 };
+const updateProductById = async (product, data) => {
+	return await Product.findByIdAndUpdate(product, data, {
+		new: true, // Return the updated document
+		runValidators: true, // Ensure schema validation runs
+	}).exec();
+};
+
+const findProductsById = async (productId, venueId) => {
+	return await Product.findOne({ _id: productId, venue: venueId });
+};
+
+const deleteProductById = async (id) => {
+	return await Product.findByIdAndDelete(id).exec();
+};
 
 module.exports = {
 	findVenueByAdminId,
 	findVenuesByAdminId,
 	findProductsByVenueId,
 	addProduct,
+	updateProductById,
+	findProductsById,
+	deleteProductById,
 };

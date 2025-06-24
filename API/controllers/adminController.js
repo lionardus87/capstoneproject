@@ -2,26 +2,30 @@ const {
 	findVenueByAdminId,
 	findProductsByVenueId,
 	addProduct,
+	deleteProductById,
+	findProductsById,
+	updateProductById,
 } = require("../services/adminService");
 
+// Get venue
 const getAdminVenues = async (adminId) => {
 	try {
-		if (!adminId) throw { statusCode: 401, message: "Unauthorized" };
+		if (!adminId) throw { err, message: "Unauthorized" };
 		const venues = await findVenuesByAdminId(adminId);
 		return venues;
 	} catch (err) {
 		throw err;
 	}
 };
-
+// Get product
 const getMyProducts = async (adminId, venueId) => {
 	try {
 		const venue = await findVenueByAdminId(adminId);
 		if (!venue) {
-			throw { statusCode: 403, message: "You are not the admin of any venue" };
+			throw { err, message: "You are not the admin of any venue" };
 		}
 		if (venue._id.toString() !== venueId) {
-			throw { statusCode: 403, message: "Unauthorized venue access" };
+			throw { err, message: "Unauthorized venue access" };
 		}
 
 		const products = await findProductsByVenueId(venueId);
@@ -32,17 +36,18 @@ const getMyProducts = async (adminId, venueId) => {
 	}
 };
 
+// Add product
 const addProductItem = async (itemData, adminId) => {
 	try {
 		const { itemName, description, price, category, imageUrl } = itemData;
 
-		console.log("Register payload:", itemData);
-		console.log("Admin ID:", adminId);
+		if (!itemName || !price || !category) {
+			throw { error, message: "Missing required product fields" };
+		}
 
 		const venue = await findVenueByAdminId(adminId);
 		if (!venue) {
-			console.log("Cannot find venue for this admin");
-			throw { statusCode: 403, message: "You are not the admin of any venue" };
+			throw { error, message: "You are not the admin of any venue" };
 		}
 
 		const newProductItem = await addProduct({
@@ -61,4 +66,28 @@ const addProductItem = async (itemData, adminId) => {
 	}
 };
 
-module.exports = { getMyProducts, addProductItem, getAdminVenues };
+// Update product
+const updateProduct = async (productId, venueId, updatedData) => {
+	const product = await findProductsById(productId, venueId);
+	if (!product) {
+		throw { message: "Product not found" };
+	}
+	return await updateProductById(productId, updatedData);
+};
+
+// Delete product
+const deleteProduct = async (productId, venueId) => {
+	const product = await findProductsById(productId, venueId);
+	if (!product) {
+		throw { message: "Product not found" };
+	}
+	return await deleteProductById(productId);
+};
+
+module.exports = {
+	getMyProducts,
+	getAdminVenues,
+	addProductItem,
+	updateProduct,
+	deleteProduct,
+};

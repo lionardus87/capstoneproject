@@ -27,9 +27,7 @@ export default function Navbar() {
 	const navigate = useNavigate();
 	const { auth, authDispatch } = useAuth();
 	const { snackbar, showSnackbar, handleClose } = useSnackbar();
-
 	const isMenuOpen = Boolean(anchorEl);
-	console.log("auth", auth);
 
 	// Login logic
 	const handleLogin = async (formData) => {

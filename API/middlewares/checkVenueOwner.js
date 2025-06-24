@@ -1,11 +1,25 @@
 const Venue = require("../models/Venue");
 
-module.exports = async function (req, res, next) {
-	const userId = req.user?._id;
+const checkVenueOwner = async (req, res, next) => {
+	try {
+		const adminId = req.user?._id;
+		const venueId = req.params.venueId;
 
-	const venue = await Venue.findOne({ admin: userId });
-	if (!venue) return res.status(403).json({ message: "You do not own a venue" });
+		if (!adminId || !venueId) {
+			return res.status(400).json({ message: "Missing required parameters" });
+		}
 
-	req.venue = venue;
-	next();
+		const venue = await Venue.findOne({ _id: venueId, admin: adminId });
+		if (!venue) {
+			return res.status(403).json({ message: "You do not own this venue" });
+		}
+
+		req.venue = venue; // attach the venue if needed downstream
+		next();
+	} catch (err) {
+		console.error("checkVenueOwner error:", err);
+		res.status(500).json({ message: "Internal server error" });
+	}
 };
+
+module.exports = checkVenueOwner;

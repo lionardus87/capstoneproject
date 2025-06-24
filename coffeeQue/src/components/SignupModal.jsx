@@ -62,7 +62,7 @@ export default function SignupModal({ open, onClose }) {
 
 	return (
 		<>
-			<Dialog open={open} onClose={onClose} disableScrollLock>
+			<Dialog open={open} onClose={onClose} fullWidth disableScrollLock>
 				<DialogTitle
 					sx={{
 						backgroundColor: "#F7F9F3",

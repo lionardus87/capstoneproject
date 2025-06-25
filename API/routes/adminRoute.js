@@ -13,7 +13,7 @@ const {
 
 //Show Venue
 router.get(
-	"/venues",
+	"/venues/:venueId/addproducts",
 	authMiddleWare,
 	checkRole(["admin"]),
 	async (req, res) => {
@@ -50,12 +50,14 @@ router.get(
 
 //Add product
 router.post(
-	"/venues/:venueId/products",
+	"/venues/:venueId/addproducts",
 	authMiddleWare,
 	checkRole(["admin"]),
 	checkVenueOwner,
 	async (req, res) => {
 		try {
+			const data = req.body;
+			console.log("data", data);
 			const adminId = req.user?._id;
 			const newProductItem = await addProductItem(req.body, adminId);
 

@@ -5,12 +5,15 @@ import App from "./App.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { VenuesProvider } from "./contexts/VenuesContext.jsx";
 import { ProductsProvider } from "./contexts/ProductsContext.jsx";
+import { CartProvider } from "./contexts/ShoppingCartContext.jsx";
 
 createRoot(document.getElementById("root")).render(
 	<VenuesProvider>
 		<AuthProvider>
 			<ProductsProvider>
-				<App />
+				<CartProvider>
+					<App />
+				</CartProvider>
 			</ProductsProvider>
 		</AuthProvider>
 	</VenuesProvider>

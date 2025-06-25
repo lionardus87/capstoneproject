@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Box, Grid, Typography, Link, Stack, Container } from "@mui/material";
-import SignupModal from "./SignupModal";
+import SignupModal from "./modals/SignupModal";
 import { Link as RouterLink } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
 

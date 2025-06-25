@@ -1,188 +1,158 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
 	Box,
 	Typography,
 	Container,
 	Grid,
-	Card,
-	CardContent,
-	CardMedia,
-	CardActions,
 	Button,
-	CircularProgress,
-	Snackbar,
-	Alert,
+	TextField,
+	IconButton,
 } from "@mui/material";
-import { useAuth } from "../contexts/AuthContext";
+import AddIcon from "@mui/icons-material/Add";
+import ProductCard from "../components/ProductCard";
+import EditProductModal from "../components/modals/EditProductModal";
 import { useProducts } from "../contexts/ProductsContext";
-import useSnackbar from "../hooks/useSnackbar";
-import EditProductModal from "../components/editProductModal";
+import { useAuth } from "../contexts/AuthContext";
 
-export default function ProductListPage() {
+export default function ProductListPage({ onAddProduct }) {
 	const { venueId } = useParams();
-	const { auth } = useAuth();
-	const isAdmin = auth.isLogin && auth.user?.role === "admin";
 	const { products, isLoading, error, refreshProducts } = useProducts();
-	const { snackbar, showSnackbar, handleClose } = useSnackbar();
-	const [updating, setUpdating] = useState(null);
+	const { auth } = useAuth();
+	const isAdminOwner = auth.isLogin && auth.user?.role === "admin";
+
+	const [editModalOpen, setEditModalOpen] = useState(false);
+	const [selectedProduct, setSelectedProduct] = useState(null);
 
 	useEffect(() => {
 		if (auth.isLoading) return;
-		if (isAdmin) {
-			refreshProducts();
+
+		if (isAdminOwner) {
+			refreshProducts(); // will use admin's own venueId
 		} else if (venueId) {
-			refreshProducts(venueId);
+			refreshProducts(venueId); // guest/member needs venueId from URL
 		}
-	}, [auth.isLoading, isAdmin, venueId]);
+	}, [auth.isLoading, isAdminOwner, venueId]);
 
-	const groupedProducts = useMemo(() => {
-		if (!Array.isArray(products)) return {};
-
-		return products.reduce((acc, item) => {
-			const category = item.category || "Uncategorized";
-			if (!acc[category]) acc[category] = [];
-			acc[category].push(item);
-			return acc;
-		}, {});
-	}, [products]);
-
-	if (isLoading) {
-		return (
-			<Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-				<CircularProgress />
-			</Box>
-		);
-	}
-
-	if (error) {
-		return (
-			<Typography color="error" textAlign="center" mt={4}>
-				{error}
-			</Typography>
-		);
-	}
-	const handleUpdate = async () => {
-		showSnackbar("Product updated successfully!", "success");
-		await refreshProducts(isAdmin ? undefined : venueId);
+	// Admin - Edit product
+	const handleEditProduct = (product) => {
+		setSelectedProduct(product);
+		setEditModalOpen(true);
 	};
 
-	// if (!Array.isArray(products)) {
-	// 	console.error("Expected products to be an array, got:", products);
-	// 	return (
-	// 		<Typography color="error" textAlign="center" mt={4}>
-	// 			Unexpected product data format.
-	// 		</Typography>
-	// 	);
-	// }
+	const handleCloseModal = () => {
+		setEditModalOpen(false);
+		setSelectedProduct(null);
+	};
+
+	const handleSave = () => {
+		refreshProducts(); // after update or delete
+		handleCloseModal();
+	};
+
+	// Filter state: category and search
+	const [categoryFilter, setCategoryFilter] = useState("all");
+	const [searchTerm, setSearchTerm] = useState("");
+
+	const filteredProducts = useMemo(() => {
+		return products.filter((product) => {
+			// Filter by category
+			if (categoryFilter !== "all" && product.category !== categoryFilter) {
+				return false;
+			}
+			// Filter by search term (case insensitive)
+			if (
+				searchTerm &&
+				!product.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+			) {
+				return false;
+			}
+			return true;
+		});
+	}, [products, categoryFilter, searchTerm]);
+
+	// Render
+	if (isLoading) return <Typography>Loading...</Typography>;
+	if (error) return <Typography color="error">{error}</Typography>;
 
 	return (
-		<>
-			<Box sx={{ bgcolor: "#F7F9F3", minHeight: "100vh", py: 6 }}>
-				<Container>
-					<Typography
-						variant="h4"
-						fontWeight="bold"
+		<Container sx={{ py: 6, bgcolor: "#F7F9F3", minHeight: "100vh" }}>
+			<Box
+				display="flex"
+				justifyContent="space-between"
+				alignItems="center"
+				mb={4}
+			>
+				<Typography variant="h4" fontWeight="bold" color="#435A12">
+					Menu
+				</Typography>
+				{isAdminOwner && (
+					<IconButton
 						color="#435A12"
-						textAlign="center"
-						mb={4}
+						onClick={onAddProduct}
+						aria-label="Add Product"
 					>
-						{isAdmin ? "My Venue Menu" : "Menu"}
-					</Typography>
-
-					{Object.entries(groupedProducts).map(([category, items]) => (
-						<Box key={category} mb={5}>
-							<Typography variant="h5" fontWeight="bold" color="#5E6F1A" mb={2}>
-								{category}
-							</Typography>
-							<Grid container spacing={4}>
-								{items.map((item) => (
-									<Grid
-										item
-										xs={12}
-										sm={6}
-										md={4}
-										key={item._id}
-										sx={{ display: "flex" }}
-									>
-										<Card
-											sx={{
-												display: "flex",
-												flexDirection: "column",
-												justifyContent: "space-between",
-												width: "100%",
-												borderRadius: 3,
-												cursor: "pointer",
-												transition: "0.3s",
-												"&:hover": {
-													boxShadow: 6,
-													transform: "scale(1.02)",
-												},
-											}}
-										>
-											<CardMedia
-												component="img"
-												height="180"
-												image={item.imageUrl || "/placeholder.jpg"}
-												alt={item.itemName}
-											/>
-											<CardContent sx={{ flexGrow: 1 }}>
-												<Typography variant="h6" fontWeight="bold">
-													{item.itemName}
-												</Typography>
-												<Typography
-													variant="body2"
-													color="text.secondary"
-													sx={{ minHeight: 48 }}
-												>
-													{item.description || "No description"}
-												</Typography>
-												<Typography fontWeight="bold" mt={1}>
-													${item.price?.toFixed(2) || "0.00"}
-												</Typography>
-											</CardContent>
-
-											{isAdmin && auth.user.venueId === venueId && (
-												<CardActions sx={{ px: 2, pb: 2 }}>
-													<Button variant="outlined" onClick={() => setUpdating(item)}>
-														UPDATE
-													</Button>
-												</CardActions>
-											)}
-										</Card>
-									</Grid>
-								))}
-							</Grid>
-						</Box>
-					))}
-				</Container>
+						<AddIcon />
+						<Typography variant="h6" fontWeight="bold" color="#435A12">
+							Add product
+						</Typography>
+					</IconButton>
+				)}
 			</Box>
-			{/* Update Modal */}
-			{updating && (
+
+			{/* Filter Buttons */}
+			<Box mb={3}>
+				{["Drinks", "Foods", "all"].map((cat) => (
+					<Button
+						key={cat}
+						variant={categoryFilter === cat ? "contained" : "outlined"}
+						onClick={() => setCategoryFilter(cat)}
+						sx={{ mr: 1, textTransform: "capitalize" }}
+					>
+						{cat}
+					</Button>
+				))}
+			</Box>
+
+			{/* Search Bar */}
+			<TextField
+				label="Search Products"
+				variant="outlined"
+				size="small"
+				fullWidth
+				value={searchTerm}
+				onChange={(e) => setSearchTerm(e.target.value)}
+				sx={{ mb: 4 }}
+			/>
+
+			{/* Products Grid */}
+			{filteredProducts.length === 0 ? (
+				<Typography textAlign="center" color="text.secondary" mt={4}>
+					No products to show.
+				</Typography>
+			) : (
+				<Grid container spacing={4}>
+					{filteredProducts.map((product) => (
+						<ProductCard
+							key={product._id}
+							product={product}
+							onEdit={handleEditProduct}
+						/>
+					))}
+				</Grid>
+			)}
+
+			{/* Edit modal */}
+			{selectedProduct && (
 				<EditProductModal
-					open={!!updating}
-					product={updating}
-					onClose={() => setUpdating(null)}
-					onSave={handleUpdate}
+					open={editModalOpen}
+					onClose={handleCloseModal}
+					product={selectedProduct}
+					onSave={handleSave}
 					refreshProducts={refreshProducts}
-					isAdmin={isAdmin}
+					isAdmin={isAdminOwner}
 				/>
 			)}
-			{/* Snackbar toast */}
-			<Snackbar
-				open={snackbar.open}
-				autoHideDuration={4000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-			>
-				<Alert
-					onClose={handleClose}
-					severity={snackbar.severity}
-					sx={{ width: "100%" }}
-				>
-					{snackbar.message}
-				</Alert>
-			</Snackbar>
-		</>
+		</Container>
 	);
 }

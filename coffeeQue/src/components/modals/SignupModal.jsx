@@ -12,8 +12,8 @@ import {
 	Snackbar,
 	Alert,
 } from "@mui/material";
-import useSnackbar from "../hooks/useSnackbar";
-import { registerUser } from "../API/authAPI";
+import useSnackbar from "../../hooks/useSnackbar";
+import { registerUser } from "../../API/authAPI";
 
 export default function SignupModal({ open, onClose }) {
 	const [formData, setFormData] = useState({

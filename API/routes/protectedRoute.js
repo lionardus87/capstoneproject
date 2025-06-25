@@ -7,11 +7,8 @@ const { checkRole } = require("../middlewares/checkRole");
 router.get("/public", (req, res) => res.send("Public content"));
 
 //Member route
-router.get(
-	"/member",
-	authMiddleWare,
-	checkRole(["member", "admin"]),
-	(req, res) => res.send("Member content")
+router.get("/member", authMiddleWare, checkRole(["member"]), (req, res) =>
+	res.send("Member content")
 );
 
 // Admin route

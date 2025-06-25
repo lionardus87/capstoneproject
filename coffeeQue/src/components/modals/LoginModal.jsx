@@ -13,9 +13,9 @@ import {
 	Alert,
 } from "@mui/material";
 import SignupModal from "./SignupModal";
-import useSnackbar from "../hooks/useSnackbar";
-import { AuthContext } from "../contexts/AuthContext";
-import { loginRequest } from "../API/authAPI";
+import useSnackbar from "../../hooks/useSnackbar";
+import { AuthContext } from "../../contexts/AuthContext";
+import { loginRequest } from "../../API/authAPI";
 import { useForm } from "react-hook-form";
 
 export default function LoginModal({ open, onClose }) {

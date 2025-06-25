@@ -24,7 +24,10 @@ export default function AppRouter() {
 				<Route path="/venues" element={<VenuesListPage />} />
 				<Route path="/venues/:venueId/products" element={<ProductListPage />} />
 				<Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-					<Route path="/add-product" element={<AddProductPage />} />
+					<Route
+						path="/admin/venues/:venueId/addproducts"
+						element={<AddProductPage />}
+					/>
 					<Route
 						path="/admin/venues/:venueId/products"
 						element={<ProductListPage />}

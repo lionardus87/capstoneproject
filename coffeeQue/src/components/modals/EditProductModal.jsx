@@ -12,9 +12,14 @@ import {
 	Alert,
 	Stack,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
 import { useForm } from "react-hook-form";
-import useSnackbar from "../hooks/useSnackbar";
-import { deleteProductRequest, updateProductRequest } from "../API/productAPI";
+import useSnackbar from "../../hooks/useSnackbar";
+import {
+	deleteProductRequest,
+	updateProductRequest,
+} from "../../API/productAPI";
 
 export default function EditProductModal({
 	open,
@@ -93,6 +98,18 @@ export default function EditProductModal({
 					}}
 				>
 					Edit Product
+					{isAdmin && (
+						<IconButton
+							onClick={() => setConfirmDeleteOpen(true)}
+							sx={{
+								position: "absolute",
+								right: 8,
+								top: 8,
+							}}
+						>
+							<DeleteIcon />
+						</IconButton>
+					)}
 				</DialogTitle>
 				<DialogContent sx={{ backgroundColor: "#F7F9F3" }}>
 					<Box sx={{ pt: 2, px: 6 }}>
@@ -162,9 +179,9 @@ export default function EditProductModal({
 							},
 						}}
 					>
-						Update
+						Save
 					</Button>
-					<Button
+					{/* <Button
 						variant="contained"
 						onClick={() => setConfirmDeleteOpen(true)}
 						sx={{
@@ -177,7 +194,7 @@ export default function EditProductModal({
 						}}
 					>
 						Delete
-					</Button>
+					</Button> */}
 				</DialogActions>
 			</Dialog>
 

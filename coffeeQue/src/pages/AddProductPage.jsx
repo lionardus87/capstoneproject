@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useParams } from "react-router-dom";
 import {
 	Box,
 	Container,
@@ -11,59 +12,28 @@ import {
 	Alert,
 } from "@mui/material";
 import useSnackbar from "../hooks/useSnackbar";
+import { useForm } from "react-hook-form";
 import { addProduct } from "../API/productAPI";
 
 const categories = ["Drinks", "Foods"];
 
 export default function AddProductPage() {
-	const [formData, setFormData] = useState({
-		itemName: "",
-		description: "",
-		price: "",
-		category: "",
-		imageUrl: "",
-	});
+	const {
+		register,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm();
 	const { snackbar, showSnackbar, handleClose } = useSnackbar();
+	const { venueId } = useParams();
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-	const handleSubmit = async () => {
-		const { itemName, description, price, category, imageUrl } = formData;
-		const missingFields = [
-			"itemName",
-			"description",
-			"price",
-			"category",
-			"imageUrl",
-		].filter(
-			(field) => typeof formData[field] !== "string" || !formData[field].trim()
-		);
-		if (missingFields.length > 0) {
-			showSnackbar(`${missingFields.join(", ")} field(s) are missing`, "error");
-			return;
-		}
+	const onSubmit = async (data) => {
 		try {
-			const result = await addProduct({
-				itemName,
-				description,
-				price,
-				category,
-				imageUrl,
-			});
+			console.log("venueId", venueId);
+			const result = await addProduct(venueId, data);
 			if (result?.success) {
 				showSnackbar("Item has been added to Menu", "success");
-				setFormData({
-					itemName: "",
-					description: "",
-					price: "",
-					category: "",
-					imageUrl: "",
-				});
+				reset(); // clear form
 			} else {
 				showSnackbar("Submission failed!", "error");
 			}
@@ -88,62 +58,72 @@ export default function AddProductPage() {
 					>
 						Add New Product Item
 					</Typography>
-
-					<Stack spacing={3} sx={{ backgroundColor: "#fff", p: 4, borderRadius: 3 }}>
-						<TextField
-							label="Product Name"
-							name="itemName"
-							value={formData.itemName}
-							onChange={handleChange}
-						/>
-						<TextField
-							label="Description"
-							name="description"
-							value={formData.description}
-							onChange={handleChange}
-						/>
-						<TextField
-							label="Price"
-							name="price"
-							type="number"
-							value={formData.price}
-							onChange={handleChange}
-						/>
-						<TextField
-							select
-							label="Category"
-							name="category"
-							value={formData.category}
-							onChange={handleChange}
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<Stack
+							spacing={3}
+							sx={{ backgroundColor: "#fff", p: 4, borderRadius: 3 }}
 						>
-							{categories.map((cat, index) => (
-								<MenuItem key={index} value={cat}>
-									{cat}
-								</MenuItem>
-							))}
-						</TextField>
-						<TextField
-							label="Menu Image URL"
-							name="imageUrl"
-							value={formData.imageUrl}
-							onChange={handleChange}
-						/>
+							<TextField
+								label="Product Name"
+								{...register("itemName", { required: "Item name is required" })}
+								error={!!errors.itemName}
+								helperText={errors.itemName?.message}
+							/>
+							<TextField
+								label="Description"
+								{...register("description", { required: "Description is required" })}
+								error={!!errors.description}
+								helperText={errors.description?.message}
+							/>
+							<TextField
+								label="Price"
+								type="number"
+								inputProps={{ min: 0 }}
+								{...register("price", {
+									required: "Price is required",
+									valueAsNumber: true,
+								})}
+								error={!!errors.price}
+								helperText={errors.price?.message}
+							/>
+							<TextField
+								select
+								label="Category"
+								{...register("category", { required: "Category is required" })}
+								error={!!errors.category}
+								helperText={errors.category?.message}
+							>
+								{categories.map((cat, index) => (
+									<MenuItem key={index} value={cat}>
+										{cat}
+									</MenuItem>
+								))}
+							</TextField>
+							<TextField
+								label="Image URL"
+								{...register("imageUrl", { required: "Image URL is required" })}
+								error={!!errors.imageUrl}
+								helperText={errors.imageUrl?.message}
+							/>
 
-						<Button
-							variant="contained"
-							onClick={handleSubmit}
-							sx={{
-								backgroundColor: "#7E8E20",
-								color: "#fff",
-								textTransform: "none",
-								"&:hover": { backgroundColor: "#5E6F1A" },
-							}}
-						>
-							Add Product
-						</Button>
-					</Stack>
+							<Button
+								variant="contained"
+								type="submit"
+								sx={{
+									backgroundColor: "#7E8E20",
+									color: "#fff",
+									textTransform: "none",
+									"&:hover": { backgroundColor: "#5E6F1A" },
+								}}
+							>
+								Add Product
+							</Button>
+						</Stack>
+					</form>
 				</Container>
 			</Box>
+
+			{/* Snackbar delete confirm */}
 			<Snackbar
 				open={snackbar.open}
 				autoHideDuration={4000}

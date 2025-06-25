@@ -1,34 +1,18 @@
-import axios from "axios";
+// import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
-export const addProduct = async ({
-	itemName,
-	description,
-	price,
-	category,
-	imageUrl,
-	venueId,
-}) => {
+export const addProduct = async (venueId, data) => {
 	try {
-		const accessToken = sessionStorage.getItem("accessToken");
-		const response = await axios.post(
-			`http://localhost:3003/admin/venues/${venueId}/products`,
-			{
-				itemName,
-				description,
-				price,
-				category,
-				imageUrl,
-			},
-			{
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-				},
-			}
+		const response = await axiosInstance.post(
+			`/admin/venues/${venueId}/addproducts`,
+			data
 		);
-		return { success: true, data: response.data };
+		return { success: true, newProduct: response.data };
 	} catch (error) {
-		return { success: false, message: error.response?.data || error.message };
+		return {
+			success: false,
+			message: error.response?.data?.message || error.message,
+		};
 	}
 };
 

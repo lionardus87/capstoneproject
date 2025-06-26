@@ -7,15 +7,15 @@ import {
 	Grid,
 	Button,
 	TextField,
-	IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import AddProductModal from "../components/modals/AddProductModal";
 import ProductCard from "../components/ProductCard";
 import EditProductModal from "../components/modals/EditProductModal";
 import { useProducts } from "../contexts/ProductsContext";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function ProductListPage({ onAddProduct }) {
+export default function ProductListPage() {
 	const { venueId } = useParams();
 	const { products, isLoading, error, refreshProducts } = useProducts();
 	const { auth } = useAuth();
@@ -23,44 +23,49 @@ export default function ProductListPage({ onAddProduct }) {
 
 	const [editModalOpen, setEditModalOpen] = useState(false);
 	const [selectedProduct, setSelectedProduct] = useState(null);
+	const [addModalOpen, setAddModalOpen] = useState(false);
 
 	useEffect(() => {
 		if (auth.isLoading) return;
 
 		if (isAdminOwner) {
-			refreshProducts(); // will use admin's own venueId
+			refreshProducts();
 		} else if (venueId) {
-			refreshProducts(venueId); // guest/member needs venueId from URL
+			refreshProducts(venueId);
 		}
 	}, [auth.isLoading, isAdminOwner, venueId]);
 
-	// Admin - Edit product
+	// Edit product modal handlers
 	const handleEditProduct = (product) => {
 		setSelectedProduct(product);
 		setEditModalOpen(true);
 	};
-
-	const handleCloseModal = () => {
+	const handleCloseEditModal = () => {
 		setEditModalOpen(false);
 		setSelectedProduct(null);
 	};
-
-	const handleSave = () => {
-		refreshProducts(); // after update or delete
-		handleCloseModal();
+	const handleSaveEdit = () => {
+		refreshProducts();
+		handleCloseEditModal();
 	};
 
-	// Filter state: category and search
+	// Add product modal handlers
+	const handleOpenAddModal = () => setAddModalOpen(true);
+	const handleCloseAddModal = () => setAddModalOpen(false);
+	const handleSaveAdd = () => {
+		refreshProducts();
+		handleCloseAddModal();
+	};
+
+	// Filters (unchanged)
 	const [categoryFilter, setCategoryFilter] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
-			// Filter by category
 			if (categoryFilter !== "all" && product.category !== categoryFilter) {
 				return false;
 			}
-			// Filter by search term (case insensitive)
 			if (
 				searchTerm &&
 				!product.itemName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -71,7 +76,6 @@ export default function ProductListPage({ onAddProduct }) {
 		});
 	}, [products, categoryFilter, searchTerm]);
 
-	// Render
 	if (isLoading) return <Typography>Loading...</Typography>;
 	if (error) return <Typography color="error">{error}</Typography>;
 
@@ -86,17 +90,22 @@ export default function ProductListPage({ onAddProduct }) {
 				<Typography variant="h4" fontWeight="bold" color="#435A12">
 					Menu
 				</Typography>
+
 				{isAdminOwner && (
-					<IconButton
-						color="#435A12"
-						onClick={onAddProduct}
-						aria-label="Add Product"
+					<Button
+						variant="contained"
+						startIcon={<AddIcon />}
+						onClick={handleOpenAddModal}
+						sx={{
+							backgroundColor: "#7E8E20",
+							color: "#fff",
+							textTransform: "none",
+							fontWeight: "bold",
+							"&:hover": { backgroundColor: "#5E6F1A" },
+						}}
 					>
-						<AddIcon />
-						<Typography variant="h6" fontWeight="bold" color="#435A12">
-							Add product
-						</Typography>
-					</IconButton>
+						Add Product
+					</Button>
 				)}
 			</Box>
 
@@ -142,17 +151,24 @@ export default function ProductListPage({ onAddProduct }) {
 				</Grid>
 			)}
 
-			{/* Edit modal */}
+			{/* Edit Product Modal */}
 			{selectedProduct && (
 				<EditProductModal
 					open={editModalOpen}
-					onClose={handleCloseModal}
+					onClose={handleCloseEditModal}
 					product={selectedProduct}
-					onSave={handleSave}
+					onSave={handleSaveEdit}
 					refreshProducts={refreshProducts}
 					isAdmin={isAdminOwner}
 				/>
 			)}
+
+			{/* Add Product Modal */}
+			<AddProductModal
+				open={addModalOpen}
+				onClose={handleCloseAddModal}
+				onSave={handleSaveAdd}
+			/>
 		</Container>
 	);
 }

@@ -1,28 +1,17 @@
-import React, { useState, useContext } from "react";
-import {
-	Box,
-	Button,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	TextField,
-	DialogActions,
-	Typography,
-	Stack,
-	Snackbar,
-	Alert,
-} from "@mui/material";
-import SignupModal from "./SignupModal";
-import useSnackbar from "../../hooks/useSnackbar";
-import { AuthContext } from "../../contexts/AuthContext";
-import { loginRequest } from "../../API/authAPI";
+import React, { useState } from "react";
+import { Box, TextField, Stack, Button, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { loginRequest } from "../../API/authAPI";
+import { useAuth } from "../../contexts/AuthContext";
+import { useSnackbar } from "../../contexts/SnackBarContext";
+import BaseModal from "./BaseModal";
+import SignupModal from "./SignupModal";
 
 export default function LoginModal({ open, onClose }) {
-	// const [formData, setFormData] = useState({ identifier: "", password: "" });
 	const [signup, setSignup] = useState(false);
-	const { snackbar, showSnackbar, handleClose } = useSnackbar();
-	const { authDispatch } = useContext(AuthContext);
+	const { authDispatch } = useAuth();
+	const { showSnackbar } = useSnackbar();
+
 	const {
 		register,
 		handleSubmit,
@@ -30,12 +19,6 @@ export default function LoginModal({ open, onClose }) {
 		reset,
 	} = useForm();
 
-	// const handleChange = (e) => {
-	// 	const { name, value } = e.target;
-	// 	setFormData((prev) => ({ ...prev, [name]: value }));
-	// };
-
-	//Login logic
 	const onSubmit = async (data) => {
 		try {
 			const result = await loginRequest(data);
@@ -48,127 +31,91 @@ export default function LoginModal({ open, onClose }) {
 						refreshToken: result.refreshToken,
 					},
 				});
-				showSnackbar("Login successful!", "success");
+				showSnackbar(`Welcome ${result.user?.username || "user"}`, "success");
+				reset();
 				onClose();
-				reset(); // Clear form
 			} else {
-				showSnackbar(
-					"Login failed: " + (result.message || "Unknown error"),
-					"error"
-				);
+				showSnackbar(result.message || "Login failed", "error");
 			}
 		} catch (error) {
-			showSnackbar(
-				"Login failed: " + (error.message || "Unexpected error"),
-				"error"
-			);
 			console.error(error);
+			showSnackbar(error.message || "Unexpected error", "error");
 		}
 	};
 
 	return (
 		<>
-			<Dialog
+			<BaseModal
 				open={open}
 				onClose={onClose}
-				maxWidth="sm"
-				fullWidth
-				disableScrollLock
+				title="Welcome Back"
+				actions={
+					<>
+						<Button
+							variant="contained"
+							onClick={onClose}
+							sx={{
+								textTransform: "none",
+								backgroundColor: "#fff",
+								color: "primary.main",
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant="contained"
+							onClick={handleSubmit(onSubmit)}
+							sx={{
+								backgroundColor: "primary.main",
+								color: "#fff",
+								textTransform: "none",
+								"&:hover": {
+									backgroundColor: "primary.dark",
+								},
+							}}
+						>
+							Login
+						</Button>
+					</>
+				}
 			>
-				<DialogTitle
-					sx={{
-						backgroundColor: "#F7F9F3",
-						color: "#435A12",
-						textAlign: "center",
-						fontWeight: "bold",
-						p: 3,
-					}}
-				>
-					Welcome Back
-				</DialogTitle>
-				<DialogContent sx={{ backgroundColor: "#F7F9F3" }}>
-					<Box sx={{ pt: 3, pb: 2, px: 8 }}>
-						<Stack spacing={3}>
-							<TextField
-								label="Username or Email"
-								{...register("identifier", {
-									required: "Username or email is required",
-								})}
-								error={!!errors.identifier}
-								helperText={errors.identifier?.message}
-								fullWidth
-								sx={{ width: 400 }}
-							/>
+				<Box sx={{ pt: 1, pb: 2 }}>
+					<Stack spacing={3} sx={{ px: 4 }}>
+						<TextField
+							label="Username or Email"
+							{...register("identifier", {
+								required: "Username or email is required",
+							})}
+							error={!!errors.identifier}
+							helperText={errors.identifier?.message}
+							fullWidth
+						/>
 
-							<TextField
-								label="Password"
-								type="password"
-								{...register("password", { required: "Password is required" })}
-								error={!!errors.password}
-								helperText={errors.password?.message}
-								fullWidth
-							/>
-							{/* <TextField
-								label="Username or Email"
-								name="identifier"
-								fullWidth
-								variant="outlined"
-								value={formData.identifier}
-								onChange={handleChange}
-								sx={{ width: 400 }}
-							/>
-							<TextField
-								label="Password"
-								type="password"
-								name="password"
-								fullWidth
-								variant="outlined"
-								value={formData.password}
-								onChange={handleChange}
-							/> */}
-						</Stack>
-					</Box>
-				</DialogContent>
-				<DialogActions
-					sx={{
-						backgroundColor: "#F7F9F3",
-						justifyContent: "center",
-						px: 3,
-						pb: 2,
-					}}
-				>
-					<Button
-						variant="contained"
-						onClick={onClose}
-						sx={{ textTransform: "none", backgroundColor: "#fff", color: "#435A12" }}
-					>
-						Cancel
-					</Button>
-					<Button
-						variant="contained"
-						onClick={handleSubmit(onSubmit)}
-						sx={{
-							backgroundColor: "#7E8E20",
-							color: "#fff",
-							textTransform: "none",
-							"&:hover": {
-								backgroundColor: "#5E6F1A",
-							},
-						}}
-					>
-						Login
-					</Button>
-				</DialogActions>
+						<TextField
+							label="Password"
+							type="password"
+							{...register("password", {
+								required: "Password is required",
+							})}
+							error={!!errors.password}
+							helperText={errors.password?.message}
+							fullWidth
+						/>
+					</Stack>
+				</Box>
+
 				<Box
 					py={3}
 					textAlign="center"
 					sx={{
 						display: "flex",
-						backgroundColor: "#F7F9F3",
 						justifyContent: "center",
+						alignItems: "center",
+						gap: 1,
+						backgroundColor: "background.default",
 					}}
 				>
-					<Typography variant="body2" sx={{ color: "#435A12" }}>
+					<Typography variant="body2" sx={{ color: "primary.main" }}>
 						Don't have an account?
 					</Typography>
 					<Typography
@@ -177,35 +124,18 @@ export default function LoginModal({ open, onClose }) {
 						sx={{
 							border: "none",
 							background: "none",
-							color: "#435A12",
+							color: "primary.main",
 							cursor: "pointer",
 							textDecoration: "underline",
-							"&:hover": { color: "#5E6F1A" },
+							"&:hover": { color: "primary.dark" },
 						}}
 					>
 						Sign Up
 					</Typography>
 				</Box>
-			</Dialog>
+			</BaseModal>
 
-			{/* Signup Modal */}
 			<SignupModal open={signup} onClose={() => setSignup(false)} />
-
-			{/* Snackbar toast */}
-			<Snackbar
-				open={snackbar.open}
-				autoHideDuration={4000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-			>
-				<Alert
-					onClose={handleClose}
-					severity={snackbar.severity}
-					sx={{ width: "100%" }}
-				>
-					{snackbar.message}
-				</Alert>
-			</Snackbar>
 		</>
 	);
 }

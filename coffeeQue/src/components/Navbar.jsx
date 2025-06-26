@@ -64,6 +64,7 @@ export default function Navbar() {
 		navigate("/");
 	};
 
+	// UserMenu icon
 	const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
 	const handleMenuClose = () => setAnchorEl(null);
 	const handleNavigate = (path) => {
@@ -76,20 +77,12 @@ export default function Navbar() {
 		const items = [];
 
 		if (auth.user.role === "admin" && auth.user?.venueId) {
-			items.push(
-				{
-					key: "menu",
-					label: "Menu",
-					onClick: () =>
-						handleNavigate(`/admin/venues/${auth.user.venueId}/products`),
-				},
-				{
-					key: "add",
-					label: "Add Product",
-					onClick: () =>
-						handleNavigate(`/admin/venues/${auth.user.venueId}/addproducts`),
-				}
-			);
+			items.push({
+				key: "menu",
+				label: "Menu",
+				onClick: () =>
+					handleNavigate(`/admin/venues/${auth.user.venueId}/products`),
+			});
 		}
 
 		if (auth.user.role === "member") {

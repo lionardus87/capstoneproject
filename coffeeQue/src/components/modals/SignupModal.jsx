@@ -1,56 +1,31 @@
-import React, { useState } from "react";
-import {
-	Box,
-	TextField,
-	Stack,
-	Button,
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Typography,
-	Snackbar,
-	Alert,
-} from "@mui/material";
-import useSnackbar from "../../hooks/useSnackbar";
+import React from "react";
+import { Box, TextField, Stack, Button, Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
 import { registerUser } from "../../API/authAPI";
+import { useSnackbar } from "../../contexts/SnackBarContext";
+import BaseModal from "./BaseModal";
 
 export default function SignupModal({ open, onClose }) {
-	const [formData, setFormData] = useState({
-		username: "",
-		email: "",
-		password: "",
-		repassword: "",
-	});
-	const { snackbar, showSnackbar, handleClose } = useSnackbar();
+	const { showSnackbar } = useSnackbar();
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({ ...prev, [name]: value }));
-	};
+	const {
+		register,
+		handleSubmit,
+		watch,
+		reset,
+		formState: { errors },
+	} = useForm();
 
-	//Register user
-	const handleSubmit = async () => {
-		const missingFields = Object.entries(formData)
-			.filter(([, value]) => !value.trim())
-			.map(([key]) => key);
-		if (missingFields.length > 0) {
-			showSnackbar(`${missingFields.join(", ")} field(s) are missing`, "error");
-			return;
-		}
-		if (formData.password !== formData.repassword) {
-			showSnackbar("Passwords do not match.", "error");
-			return;
-		}
+	const onSubmit = async (data) => {
+		const { username, email, password } = data;
 		try {
-			const { username, email, password } = formData;
 			const result = await registerUser({ username, email, password });
 			if (result?.success) {
 				showSnackbar("Signup successful!", "success");
+				reset(); // Clear form
 				onClose();
-				setFormData({ username: "", email: "", password: "", repassword: "" });
 			} else {
-				showSnackbar("Signup failed. Try a different email or username.", "error");
+				showSnackbar(result?.message || "Signup failed. Try again.", "error");
 			}
 		} catch (error) {
 			showSnackbar(
@@ -61,113 +36,103 @@ export default function SignupModal({ open, onClose }) {
 	};
 
 	return (
-		<>
-			<Dialog open={open} onClose={onClose} fullWidth disableScrollLock>
-				<DialogTitle
-					sx={{
-						backgroundColor: "#F7F9F3",
-						color: "#435A12",
-						textAlign: "center",
-						fontWeight: "bold",
-						p: 3,
-					}}
-				>
-					Create New Account
-				</DialogTitle>
-
-				<DialogContent sx={{ backgroundColor: "#F7F9F3", px: 8, pt: 3 }}>
-					<Stack spacing={3}>
-						<TextField
-							label="Username"
-							name="username"
-							fullWidth
-							variant="outlined"
-							value={formData.username}
-							onChange={handleChange}
-							sx={{ width: 400 }}
-						/>
-						<TextField
-							label="Email"
-							name="email"
-							fullWidth
-							variant="outlined"
-							value={formData.email}
-							onChange={handleChange}
-							sx={{ width: 400 }}
-						/>
-						<TextField
-							label="Password"
-							type="password"
-							name="password"
-							fullWidth
-							variant="outlined"
-							value={formData.password}
-							onChange={handleChange}
-							sx={{ width: 400 }}
-						/>
-						<TextField
-							label="Re-type Password"
-							type="password"
-							name="repassword"
-							fullWidth
-							variant="outlined"
-							value={formData.repassword}
-							onChange={handleChange}
-							sx={{ width: 400 }}
-						/>
-					</Stack>
-				</DialogContent>
-
-				<DialogActions
-					sx={{
-						backgroundColor: "#F7F9F3",
-						justifyContent: "space-between",
-						px: 3,
-						pb: 2,
-					}}
-				>
+		<BaseModal
+			open={open}
+			onClose={() => {
+				reset();
+				onClose();
+			}}
+			title="Create New Account"
+			actions={
+				<>
 					<Button
 						variant="contained"
-						onClick={onClose}
+						onClick={() => {
+							reset();
+							onClose();
+						}}
 						sx={{
 							textTransform: "none",
 							backgroundColor: "#fff",
-							color: "#435A12",
+							color: "primary.main",
 						}}
 					>
 						Cancel
 					</Button>
 					<Button
 						variant="contained"
-						onClick={handleSubmit}
+						onClick={handleSubmit(onSubmit)}
 						sx={{
-							backgroundColor: "#7E8E20",
+							backgroundColor: "primary.main",
 							color: "#fff",
 							textTransform: "none",
 							"&:hover": {
-								backgroundColor: "#5E6F1A",
+								backgroundColor: "primary.dark",
 							},
 						}}
 					>
 						Signup
 					</Button>
-				</DialogActions>
-			</Dialog>
+				</>
+			}
+		>
+			<Box sx={{ pt: 1, pb: 2 }}>
+				<Stack spacing={3} sx={{ px: 4 }}>
+					<TextField
+						label="Username"
+						{...register("username", {
+							required: "Username is required",
+							minLength: { value: 3, message: "Minimum 3 characters" },
+						})}
+						error={!!errors.username}
+						helperText={errors.username?.message}
+						fullWidth
+					/>
 
-			<Snackbar
-				open={snackbar.open}
-				autoHideDuration={4000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-			>
-				<Alert
-					onClose={handleClose}
-					severity={snackbar.severity}
-					sx={{ width: "100%" }}
-				>
-					{snackbar.message}
-				</Alert>
-			</Snackbar>
-		</>
+					<TextField
+						label="Email"
+						type="email"
+						{...register("email", {
+							required: "Email is required",
+							pattern: {
+								value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+								message: "Invalid email format",
+							},
+						})}
+						error={!!errors.email}
+						helperText={errors.email?.message}
+						fullWidth
+					/>
+
+					<TextField
+						label="Password"
+						type="password"
+						{...register("password", {
+							required: "Password is required",
+							minLength: {
+								value: 6,
+								message: "Minimum 6 characters",
+							},
+						})}
+						error={!!errors.password}
+						helperText={errors.password?.message}
+						fullWidth
+					/>
+
+					<TextField
+						label="Re-type Password"
+						type="password"
+						{...register("repassword", {
+							required: "Please re-type your password",
+							validate: (value) =>
+								value === watch("password") || "Passwords do not match",
+						})}
+						error={!!errors.repassword}
+						helperText={errors.repassword?.message}
+						fullWidth
+					/>
+				</Stack>
+			</Box>
+		</BaseModal>
 	);
 }

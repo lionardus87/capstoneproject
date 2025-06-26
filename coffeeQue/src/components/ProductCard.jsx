@@ -59,12 +59,17 @@ export default function ProductCard({ product, onEdit }) {
 						${product.price?.toFixed(2) || "0.00"}
 					</Typography>
 				</CardContent>
-				<CardActions>
+				<CardActions sx={{ justifyContent: "end" }}>
 					{isAdminOwner && (
 						<Button
 							size="small"
 							variant="outlined"
 							onClick={() => onEdit && onEdit(product)}
+							sx={{
+								textTransform: "none",
+								backgroundColor: "#fff",
+								color: "primary.main",
+							}}
 						>
 							Edit
 						</Button>

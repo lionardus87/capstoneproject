@@ -22,4 +22,4 @@ const checkVenueOwner = async (req, res, next) => {
 	}
 };
 
-module.exports = checkVenueOwner;
+module.exports = { checkVenueOwner };

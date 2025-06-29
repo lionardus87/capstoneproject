@@ -6,15 +6,18 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import { VenuesProvider } from "./contexts/VenuesContext.jsx";
 import { ProductsProvider } from "./contexts/ProductsContext.jsx";
 import { CartProvider } from "./contexts/ShoppingCartContext.jsx";
+import { OrdersProvider } from "./contexts/OrderContext.jsx";
 
 createRoot(document.getElementById("root")).render(
 	<VenuesProvider>
 		<AuthProvider>
-			<ProductsProvider>
-				<CartProvider>
-					<App />
-				</CartProvider>
-			</ProductsProvider>
+			<OrdersProvider>
+				<ProductsProvider>
+					<CartProvider>
+						<App />
+					</CartProvider>
+				</ProductsProvider>
+			</OrdersProvider>
 		</AuthProvider>
 	</VenuesProvider>
 );

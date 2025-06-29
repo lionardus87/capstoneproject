@@ -26,11 +26,11 @@ export default function AppRouter() {
 						path="/admin/venues/:venueId/products"
 						element={<ProductListPage />}
 					/>
-					<Route path="/orders" element={<OrdersPage />} />
+					<Route path="/admin/venues/:venueId/orders" element={<OrdersPage />} />
 				</Route>
 				<Route element={<ProtectedRoute allowedRoles={["member"]} />}>
 					<Route path="/venues" element={<VenuesListPage />} />
-					<Route path="/orders" element={<OrdersPage />} />
+					<Route path="/member/:userId/orders" element={<OrdersPage />} />
 				</Route>
 			</Routes>
 			<Footer></Footer>

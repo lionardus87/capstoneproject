@@ -37,7 +37,11 @@ const orderSchema = new mongoose.Schema(
 			],
 			default: "Pending",
 		},
+		confirmedByAdmin: { type: Boolean, default: false },
+		confirmedByMember: { type: Boolean, default: false },
 		note: String,
 	},
 	{ timestamps: true }
 );
+
+module.exports = mongoose.model("Order", orderSchema);

@@ -85,12 +85,19 @@ export default function Navbar() {
 		const items = [];
 
 		if (auth.user.role === "admin" && auth.user?.venueId) {
-			items.push({
-				key: "menu",
-				label: "Menu",
-				onClick: () =>
-					handleNavigate(`/admin/venues/${auth.user.venueId}/products`),
-			});
+			items.push(
+				{
+					key: "menu",
+					label: "Menu",
+					onClick: () =>
+						handleNavigate(`/admin/venues/${auth.user.venueId}/products`),
+				},
+				{
+					key: "manage",
+					label: "Manage Order",
+					onClick: () => handleNavigate(`/admin/venues/${auth.user.venueId}/orders`),
+				}
+			);
 		}
 
 		if (auth.user.role === "member") {
@@ -103,7 +110,7 @@ export default function Navbar() {
 				{
 					key: "status",
 					label: "Order Status",
-					onClick: () => handleNavigate("/order-status"),
+					onClick: () => handleNavigate(`/member/${auth.user._id}/orders`),
 				}
 			);
 		}

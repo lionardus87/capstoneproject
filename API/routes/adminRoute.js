@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authMiddleWare } = require("../middlewares/authMiddleware");
 const { checkRole } = require("../middlewares/checkRole");
-const checkVenueOwner = require("../middlewares/checkVenueOwner");
+const { checkVenueOwner } = require("../middlewares/checkVenueOwner");
 const {
 	getMyProducts,
 	addProductItem,

@@ -10,6 +10,7 @@ const authRoutes = require("./routes/authRoute");
 const protectedRoutes = require("./routes/protectedRoute");
 const adminRoutes = require("./routes/adminRoute");
 const publicRoutes = require("./routes/publicRoute");
+const orderRoutes = require("./routes/orderRoute");
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use("/auth", authRoutes); //authentication
 app.use("/protected", protectedRoutes); //Role test routes
 app.use("/", publicRoutes); //Public venues/products
 app.use("/admin", adminRoutes); //Admin
+app.use("/", orderRoutes); // Order
 
 app.get("/", (req, res) =>
 	res.json({

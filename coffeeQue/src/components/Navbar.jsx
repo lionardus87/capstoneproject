@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
 	AppBar,
 	Toolbar,
@@ -38,7 +38,15 @@ export default function Navbar() {
 	const [cartOpen, setCartOpen] = useState(false);
 
 	const isMenuOpen = Boolean(anchorEl);
-	const totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
+	const totalQty = useMemo(
+		() =>
+			cartItems.reduce(
+				(sum, venue) =>
+					sum + venue.items.reduce((vsum, item) => vsum + item.qty, 0),
+				0
+			),
+		[cartItems]
+	);
 
 	const handleLogin = async (formData) => {
 		try {
@@ -123,7 +131,12 @@ export default function Navbar() {
 					<Stack direction="row" spacing={2} alignItems="center">
 						{auth.user?.role === "member" && (
 							<IconButton onClick={() => setCartOpen(true)} sx={{ color: "#435A12" }}>
-								<Badge badgeContent={totalQty} color="error">
+								<Badge
+									badgeContent={totalQty > 0 ? totalQty : null}
+									color="error"
+									overlap="rectangular"
+									showZero={false}
+								>
 									<ShoppingCartIcon />
 								</Badge>
 							</IconButton>

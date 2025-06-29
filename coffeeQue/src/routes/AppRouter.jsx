@@ -5,10 +5,10 @@ import HomePage from "../pages/HomePage";
 import AboutPage from "../pages/AboutPage";
 import ContactPage from "../pages/ContactPage";
 import RegisterVenuePage from "../pages/RegisterVenuePage";
-import OrderStatusPage from "../pages/OrderStatusPage";
 import ProductListPage from "../pages/ProductListPage";
 import ProtectedRoute from "./ProtectedRouter";
 import VenuesListPage from "../pages/VenuesListPage";
+import OrdersPage from "../pages/OrdersPage";
 
 export default function AppRouter() {
 	return (
@@ -26,10 +26,11 @@ export default function AppRouter() {
 						path="/admin/venues/:venueId/products"
 						element={<ProductListPage />}
 					/>
+					<Route path="/orders" element={<OrdersPage />} />
 				</Route>
 				<Route element={<ProtectedRoute allowedRoles={["member"]} />}>
 					<Route path="/venues" element={<VenuesListPage />} />
-					<Route path="/order-status" element={<OrderStatusPage />} />
+					<Route path="/orders" element={<OrdersPage />} />
 				</Route>
 			</Routes>
 			<Footer></Footer>

@@ -59,8 +59,20 @@ const login = async ({ identifier, password }) => {
 	const info = identifier.includes("@")
 		? { email: identifier, password }
 		: { username: identifier, password };
-	const user = await checkPassword(info);
-	if (!user) return { error: "Invalid username or email." };
+
+	const result = await checkPassword(info);
+
+	if (!result.success) {
+		if (result.reason === "identifier") {
+			return { error: "Username or email not found.", field: "identifier" };
+		}
+		if (result.reason === "password") {
+			return { error: "Incorrect password.", field: "password" };
+		}
+		return { error: "Login failed." }; // fallback
+	}
+
+	const user = result.user;
 
 	const payload = {
 		_id: user._id,

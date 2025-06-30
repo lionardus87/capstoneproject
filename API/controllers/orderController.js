@@ -92,10 +92,15 @@ const updateOrderStatus = async (orderId, status, user) => {
 
 	await order.save();
 
-	await order
-		.populate("member", "username email")
-		.populate("venue", "venueName")
-		.populate("products.product", "itemName price");
+	// await order
+	// 	.populate("member", "username email")
+	// 	.populate("venue", "venueName")
+	// 	.populate("products.product", "itemName price");
+	await order.populate([
+		{ path: "member", select: "username email" },
+		{ path: "venue", select: "venueName" },
+		{ path: "products.product", select: "itemName price" },
+	]);
 
 	return order;
 };

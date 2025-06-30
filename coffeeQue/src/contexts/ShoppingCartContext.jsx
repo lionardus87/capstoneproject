@@ -96,7 +96,6 @@ export const CartProvider = ({ children }) => {
 			const stored = localStorage.getItem(`coffeeque_cart_${username}`);
 			const parsed = stored ? JSON.parse(stored) : [];
 
-			// Patch: Add missing venueId/venueName
 			return parsed.map((entry) => {
 				if (!entry.venueId && entry.items?.[0]?.venue) {
 					const venueId = entry.items[0].venue;
@@ -127,8 +126,9 @@ export const CartProvider = ({ children }) => {
 			);
 		}
 	}, [cartItems, username]);
+
 	const addToCart = (item) => {
-		const venueId = item.venue; // assumes product has venue ID
+		const venueId = item.venue;
 		const venueName = getVenueById(venueId)?.venueName || "Unknown Venue";
 		dispatch({ type: "addToCart", item, venueId, venueName });
 	};

@@ -48,7 +48,7 @@ export const changeOrderStatus = async (orderId, newStatus) => {
 		const response = await axiosInstance.patch(`/orders/${orderId}/status`, {
 			status: newStatus,
 		});
-		return { success: true, updatedOrder: response.data };
+		return { success: true, updatedOrder: response.data.order };
 	} catch (error) {
 		return {
 			success: false,

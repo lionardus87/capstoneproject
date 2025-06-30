@@ -39,16 +39,17 @@ export const loginRequest = async ({ identifier, password }) => {
 			identifier,
 			password,
 		});
-		// return result.data;
 		return { success: true, ...result.data };
 	} catch (err) {
 		console.error("loginRequest error:", err);
 		return {
 			success: false,
 			message: err.response?.data?.message || err.message || "Login failed",
+			field: err.response?.data?.field || null,
 		};
 	}
 };
+
 export const fetchUserWithToken = async () => {
 	const accessToken = sessionStorage.getItem("accessToken");
 	if (!accessToken) throw new Error("No access token found");

@@ -102,7 +102,7 @@ router.patch(
 				return res.status(404).json({ message: "Order not found or unauthorized" });
 			}
 
-			res.status(200).json(updatedOrder);
+			res.status(200).json({ message: "Order updated", order: updatedOrder });
 		} catch (err) {
 			console.error("Error updating order status:", err);
 			res.status(500).json({ message: err.message || "Failed to update status" });

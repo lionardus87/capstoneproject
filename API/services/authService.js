@@ -33,18 +33,18 @@ const updateUserRole = async (userId, role = "admin") => {
 
 const checkPassword = async ({ email, username, password }) => {
 	const query = email ? { email } : { username };
-	// console.log("Checking for user:", query);
-
 	const user = await User.findOne(query);
+
 	if (!user) {
-		// console.log("User not found");
-		return null;
+		return { success: false, reason: "identifier" };
 	}
 
 	const isValid = await bcrypt.compare(password, user.password);
-	// console.log("Password valid:", isValid);
+	if (!isValid) {
+		return { success: false, reason: "password" };
+	}
 
-	return isValid ? user : null;
+	return { success: true, user };
 };
 
 module.exports = {

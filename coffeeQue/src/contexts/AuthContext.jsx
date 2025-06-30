@@ -10,7 +10,6 @@ const initialState = {
 	refreshToken: null,
 	isLogin: false,
 	isLoading: true,
-	// userRole: null,
 };
 
 function reducer(state, action) {
@@ -19,7 +18,6 @@ function reducer(state, action) {
 			const { user, accessToken, refreshToken } = action.payload;
 			if (accessToken) sessionStorage.setItem("accessToken", accessToken);
 			if (refreshToken) sessionStorage.setItem("refreshToken", refreshToken);
-			// if (user?.role) sessionStorage.setItem("userRole", user.role);
 
 			return {
 				...state,
@@ -28,7 +26,6 @@ function reducer(state, action) {
 				refreshToken,
 				isLogin: true,
 				isLoading: false,
-				// userRole: user?.role || null,
 			};
 		}
 		case "signOut": {
@@ -65,7 +62,6 @@ export const AuthProvider = ({ children }) => {
 					dispatch({ type: "signOut" });
 				}
 			} else {
-				// No token present → we’re done – user is a guest
 				dispatch({ type: "finishLoading" });
 			}
 		};

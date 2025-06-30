@@ -5,8 +5,6 @@ import {
 	Stack,
 	ButtonBase,
 	Box,
-	Snackbar,
-	Alert,
 	Menu,
 	MenuItem,
 	IconButton,
@@ -18,24 +16,24 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useNavigate } from "react-router";
 
-import LoginModal from "./modals/LoginModal";
-import ShoppingCartModal from "./modals/ShoppingCartModal";
 import logo from "../assets/CQ.png";
 
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/ShoppingCartContext";
-import useSnackbar from "../hooks/useSnackbar";
-import { loginRequest } from "../API/authAPI";
+import { useModal } from "../contexts/ModalContext";
+import { useSnackbar } from "../contexts/SnackBarContext";
+
+import LoginModal from "./modals/LoginModal";
+import ShoppingCartModal from "./modals/ShoppingCartModal";
 
 export default function Navbar() {
 	const navigate = useNavigate();
 	const { auth, authDispatch } = useAuth();
 	const { cartItems } = useCart();
-	const { snackbar, showSnackbar, handleClose } = useSnackbar();
+	const { openModal, modal, closeModal } = useModal();
+	const { showSnackbar } = useSnackbar();
 
-	const [signin, setSignin] = useState(false);
 	const [anchorEl, setAnchorEl] = useState(null);
-	const [cartOpen, setCartOpen] = useState(false);
 
 	const isMenuOpen = Boolean(anchorEl);
 	const totalQty = useMemo(
@@ -48,23 +46,6 @@ export default function Navbar() {
 		[cartItems]
 	);
 
-	const handleLogin = async (formData) => {
-		try {
-			const { accessToken, refreshToken, user } = await loginRequest(formData);
-			authDispatch({
-				type: "signIn",
-				payload: { user, accessToken, refreshToken },
-			});
-			return { success: true };
-		} catch (err) {
-			console.error("Login failed:", err);
-			return {
-				success: false,
-				message: err?.response?.data?.message || "Invalid credentials",
-			};
-		}
-	};
-
 	const handleLogout = () => {
 		authDispatch({ type: "signOut" });
 		handleMenuClose();
@@ -72,7 +53,6 @@ export default function Navbar() {
 		navigate("/");
 	};
 
-	// UserMenu icon
 	const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
 	const handleMenuClose = () => setAnchorEl(null);
 	const handleNavigate = (path) => {
@@ -82,6 +62,7 @@ export default function Navbar() {
 
 	const getMenuItems = () => {
 		if (!auth.isLogin) return [];
+
 		const items = [];
 
 		if (auth.user.role === "admin" && auth.user?.venueId) {
@@ -137,7 +118,10 @@ export default function Navbar() {
 					</ButtonBase>
 					<Stack direction="row" spacing={2} alignItems="center">
 						{auth.user?.role === "member" && (
-							<IconButton onClick={() => setCartOpen(true)} sx={{ color: "#435A12" }}>
+							<IconButton
+								onClick={() => openModal("shoppingCart")}
+								sx={{ color: "#435A12" }}
+							>
 								<Badge
 									badgeContent={totalQty > 0 ? totalQty : null}
 									color="error"
@@ -168,7 +152,7 @@ export default function Navbar() {
 						) : (
 							<Button
 								startIcon={<AccountCircleIcon />}
-								onClick={() => setSignin(true)}
+								onClick={() => openModal("login")}
 								sx={{
 									backgroundColor: "#fff",
 									color: "#435A12",
@@ -200,31 +184,9 @@ export default function Navbar() {
 				))}
 			</Menu>
 
-			<LoginModal
-				open={signin}
-				onClose={() => setSignin(false)}
-				onSave={handleLogin}
-			/>
-			<ShoppingCartModal
-				open={cartOpen}
-				onClose={() => setCartOpen(false)}
-				onCheckout={() => navigate("/checkout")}
-			/>
+			<LoginModal open={modal === "login"} onClose={closeModal} />
 
-			<Snackbar
-				open={snackbar.open}
-				autoHideDuration={4000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-			>
-				<Alert
-					onClose={handleClose}
-					severity={snackbar.severity}
-					sx={{ width: "100%" }}
-				>
-					{snackbar.message}
-				</Alert>
-			</Snackbar>
+			<ShoppingCartModal open={modal === "shoppingCart"} onClose={closeModal} />
 		</>
 	);
 }

@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, TextField, Stack, Button, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { loginRequest } from "../../API/authAPI";
 import { useAuth } from "../../contexts/AuthContext";
 import { useSnackbar } from "../../contexts/SnackBarContext";
+import { useModal } from "../../contexts/ModalContext";
 import BaseModal from "./BaseModal";
-import SignupModal from "./SignupModal";
 
 export default function LoginModal({ open, onClose }) {
-	const [signup, setSignup] = useState(false);
 	const { authDispatch } = useAuth();
 	const { showSnackbar } = useSnackbar();
+	const { openModal } = useModal();
 
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors },
 		reset,
 	} = useForm();
@@ -22,6 +23,7 @@ export default function LoginModal({ open, onClose }) {
 	const onSubmit = async (data) => {
 		try {
 			const result = await loginRequest(data);
+
 			if (result.success) {
 				authDispatch({
 					type: "signIn",
@@ -31,15 +33,26 @@ export default function LoginModal({ open, onClose }) {
 						refreshToken: result.refreshToken,
 					},
 				});
-				showSnackbar(`Welcome ${result.user?.username || "user"}`, "success");
 				reset();
 				onClose();
+				showSnackbar(`Welcome ${result.user?.username || "user"}`, "success");
 			} else {
-				showSnackbar(result.message || "Login failed", "error");
+				if (result.field) {
+					setError(result.field, {
+						type: "manual",
+						message: result.message || "Login failed",
+					});
+				} else {
+					showSnackbar(result.message || "Login failed", "error");
+				}
 			}
 		} catch (error) {
-			console.error(error);
-			showSnackbar(error.message || "Unexpected error", "error");
+			console.error("Login error:", error);
+			const { field, message } = error?.response?.data || {};
+			setError(field || "identifier", {
+				type: "manual",
+				message: message || "Unexpected error occurred",
+			});
 		}
 	};
 
@@ -120,7 +133,10 @@ export default function LoginModal({ open, onClose }) {
 					</Typography>
 					<Typography
 						component="button"
-						onClick={() => setSignup(true)}
+						onClick={() => {
+							onClose();
+							openModal("signup");
+						}}
 						sx={{
 							border: "none",
 							background: "none",
@@ -134,8 +150,6 @@ export default function LoginModal({ open, onClose }) {
 					</Typography>
 				</Box>
 			</BaseModal>
-
-			<SignupModal open={signup} onClose={() => setSignup(false)} />
 		</>
 	);
 }

@@ -50,7 +50,9 @@ router.post("/login", async (req, res) => {
 		const result = await login(req.body);
 		if (result.error) {
 			console.log("Login error:", result.error);
-			return res.status(401).json({ message: result.error });
+			return res
+				.status(401)
+				.json({ message: result.error, field: result.field || null });
 		}
 		res.status(200).json(result);
 	} catch (err) {

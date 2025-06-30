@@ -18,7 +18,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import useSnackbar from "../hooks/useSnackbar";
+import { useSnackbar } from "../contexts/SnackBarContext";
 import { registerVenue } from "../API/authAPI";
 
 const steps = [
@@ -47,7 +47,7 @@ export default function RegisterVenuePage() {
 		postcode: "",
 		logoUrl: "",
 	});
-	const { snackbar, showSnackbar, handleClose } = useSnackbar();
+	const { showSnackbar } = useSnackbar();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -206,21 +206,6 @@ export default function RegisterVenuePage() {
 					</Box>
 				</Container>
 			</Box>
-
-			<Snackbar
-				open={snackbar.open}
-				autoHideDuration={4000}
-				onClose={handleClose}
-				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-			>
-				<Alert
-					onClose={handleClose}
-					severity={snackbar.severity}
-					sx={{ width: "100%" }}
-				>
-					{snackbar.message}
-				</Alert>
-			</Snackbar>
 		</>
 	);
 }

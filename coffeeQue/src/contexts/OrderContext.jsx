@@ -28,9 +28,9 @@ function ordersReducer(state, action) {
 		case "updateStatus":
 			return {
 				...state,
-				orders: state.orders.map((order) =>
-					order._id === action.payload._id ? action.payload : order
-				),
+				orders: state.orders.map((order) => {
+					return order._id === action.payload._id ? action.payload : order;
+				}),
 			};
 		default:
 			return state;

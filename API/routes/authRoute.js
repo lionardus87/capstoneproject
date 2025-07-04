@@ -15,11 +15,13 @@ const {
 router.post("/register", async (req, res) => {
 	try {
 		const user = await register(req.body);
-		if (!user) return res.status(409).send("User already exists");
 		res.status(201).json(user);
 	} catch (err) {
 		console.error("Registration error:", err);
-		res.status(500).send("Register failed");
+		return res.status(409).json({
+			error: err.message || "Registration failed",
+			field: err.field || "root",
+		});
 	}
 });
 

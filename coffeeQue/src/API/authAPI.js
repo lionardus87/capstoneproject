@@ -1,78 +1,76 @@
-import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
-// --------------------------- AUTH REQUESTS ---------------------------
 export const registerUser = async ({ username, email, password }) => {
 	try {
-		const response = await axios.post("http://localhost:3003/auth/register", {
+		const response = await axiosInstance.post("/auth/register", {
 			username,
 			email,
 			password,
 		});
 		return { success: true, data: response.data };
 	} catch (error) {
-		return { success: false, message: error.response?.data || error.message };
+		const errorData = error.response?.data;
+		return {
+			success: false,
+			message: errorData?.error || error.message || "Unknown error",
+			field: errorData?.field || "root",
+		};
 	}
 };
 
 export const registerVenue = async ({ venueName, city, postcode, logoUrl }) => {
 	try {
-		const accessToken = sessionStorage.getItem("accessToken");
-		const response = await axios.post(
-			"http://localhost:3003/auth/registervenue",
-			{ venueName, city, postcode, logoUrl },
-			{
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Bearer ${accessToken}`,
-				},
-			}
-		);
+		const response = await axiosInstance.post("/auth/registervenue", {
+			venueName,
+			city,
+			postcode,
+			logoUrl,
+		});
 		return { success: true, data: response.data };
 	} catch (error) {
-		return { success: false, message: error.response?.data || error.message };
+		const errorData = error.response?.data;
+		return {
+			success: false,
+			message: errorData?.error || error.message,
+			field: errorData?.field || "root",
+		};
 	}
 };
 
 export const loginRequest = async ({ identifier, password }) => {
 	try {
-		const result = await axios.post("http://localhost:3003/auth/login", {
+		const response = await axiosInstance.post("/auth/login", {
 			identifier,
 			password,
 		});
-		return { success: true, ...result.data };
-	} catch (err) {
-		console.error("loginRequest error:", err);
+		return { success: true, ...response.data };
+	} catch (error) {
+		console.error("loginRequest error:", error);
+		const errorData = error.response?.data;
 		return {
 			success: false,
-			message: err.response?.data?.message || err.message || "Login failed",
-			field: err.response?.data?.field || null,
+			message: errorData?.message || error.message || "Login failed",
+			field: errorData?.field || null,
 		};
 	}
 };
 
 export const fetchUserWithToken = async () => {
-	const accessToken = sessionStorage.getItem("accessToken");
-	if (!accessToken) throw new Error("No access token found");
-
-	return await apiProcess(() =>
-		axios.get("http://localhost:3003/auth/me", {
-			headers: {
-				Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-			},
-		})
-	);
+	return await apiProcess(() => axiosInstance.get("/auth/me"));
 };
 
 export const getAccessToken = async () => {
 	try {
 		const token = sessionStorage.getItem("refreshToken");
-		const result = await axios.get("http://localhost:3003/auth/accessToken", {
-			headers: { Authorization: `Bearer ${token}` },
+		const response = await axiosInstance.get("/auth/accessToken", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		});
-		sessionStorage.setItem("accessToken", result.data.accessToken);
-	} catch (err) {
-		console.error("Failed to refresh access token:", err);
-		throw err;
+		sessionStorage.setItem("accessToken", response.data.accessToken);
+	} catch (error) {
+		console.error("Failed to refresh access token:", error);
+		throw error;
 	}
 };
 

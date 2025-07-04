@@ -79,6 +79,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 					{...register("itemName", { required: "Item name is required" })}
 					error={!!errors.itemName}
 					helperText={errors.itemName?.message}
+					sx={{ backgroundColor: "background.textfield" }}
 					fullWidth
 				/>
 				<TextField
@@ -86,6 +87,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 					{...register("description", { required: "Description is required" })}
 					error={!!errors.description}
 					helperText={errors.description?.message}
+					sx={{ backgroundColor: "background.textfield" }}
 					fullWidth
 				/>
 				<TextField
@@ -98,6 +100,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 					})}
 					error={!!errors.price}
 					helperText={errors.price?.message}
+					sx={{ backgroundColor: "background.textfield" }}
 					fullWidth
 				/>
 				<TextField
@@ -106,6 +109,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 					{...register("category", { required: "Category is required" })}
 					error={!!errors.category}
 					helperText={errors.category?.message}
+					sx={{ backgroundColor: "background.textfield" }}
 					fullWidth
 				>
 					{categories.map((cat, index) => (
@@ -119,6 +123,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 					{...register("imageUrl", { required: "Image URL is required" })}
 					error={!!errors.imageUrl}
 					helperText={errors.imageUrl?.message}
+					sx={{ backgroundColor: "background.textfield" }}
 					fullWidth
 				/>
 			</Stack>

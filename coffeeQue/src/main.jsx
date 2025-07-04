@@ -7,6 +7,7 @@ import { VenuesProvider } from "./contexts/VenuesContext.jsx";
 import { ProductsProvider } from "./contexts/ProductsContext.jsx";
 import { CartProvider } from "./contexts/ShoppingCartContext.jsx";
 import { OrdersProvider } from "./contexts/OrderContext.jsx";
+import { SocketProvider } from "./contexts/SocketContext.jsx";
 
 createRoot(document.getElementById("root")).render(
 	<VenuesProvider>
@@ -14,7 +15,9 @@ createRoot(document.getElementById("root")).render(
 			<OrdersProvider>
 				<ProductsProvider>
 					<CartProvider>
-						<App />
+						<SocketProvider>
+							<App />
+						</SocketProvider>
 					</CartProvider>
 				</ProductsProvider>
 			</OrdersProvider>

@@ -14,24 +14,31 @@ export default function SignupModal({ open, onClose }) {
 		watch,
 		reset,
 		formState: { errors },
+		setError,
 	} = useForm();
 
 	const onSubmit = async (data) => {
 		const { username, email, password } = data;
+
 		try {
 			const result = await registerUser({ username, email, password });
+
 			if (result?.success) {
 				showSnackbar("Signup successful!", "success");
-				reset(); // Clear form
+				reset();
 				onClose();
 			} else {
-				showSnackbar(result?.message || "Signup failed. Try again.", "error");
+				const { message, field } = result;
+				setError(field || "root", {
+					type: "manual",
+					message: message || "Signup failed",
+				});
 			}
 		} catch (error) {
-			showSnackbar(
-				"Signup failed: " + (error?.message || "Server error"),
-				"error"
-			);
+			setError("root", {
+				type: "manual",
+				message: error?.message || "Server error during registration",
+			});
 		}
 	};
 
@@ -78,6 +85,11 @@ export default function SignupModal({ open, onClose }) {
 		>
 			<Box sx={{ pt: 1, pb: 2 }}>
 				<Stack spacing={3} sx={{ px: 4 }}>
+					{errors.root && (
+						<Typography color="error" sx={{ mb: 2 }}>
+							{errors.root.message}
+						</Typography>
+					)}
 					<TextField
 						label="Username"
 						{...register("username", {
@@ -86,6 +98,7 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.username}
 						helperText={errors.username?.message}
+						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -101,6 +114,7 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.email}
 						helperText={errors.email?.message}
+						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -116,6 +130,7 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.password}
 						helperText={errors.password?.message}
+						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -129,6 +144,7 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.repassword}
 						helperText={errors.repassword?.message}
+						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 				</Stack>

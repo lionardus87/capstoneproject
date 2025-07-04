@@ -92,7 +92,7 @@ export default function LoginModal({ open, onClose }) {
 					</>
 				}
 			>
-				<Box sx={{ pt: 1, pb: 2 }}>
+				<Box sx={{ pt: 1, pb: 2, backgroundColor: "background.paper" }}>
 					<Stack spacing={3} sx={{ px: 4 }}>
 						<TextField
 							label="Username or Email"
@@ -101,6 +101,7 @@ export default function LoginModal({ open, onClose }) {
 							})}
 							error={!!errors.identifier}
 							helperText={errors.identifier?.message}
+							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 
@@ -112,6 +113,7 @@ export default function LoginModal({ open, onClose }) {
 							})}
 							error={!!errors.password}
 							helperText={errors.password?.message}
+							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 					</Stack>
@@ -125,7 +127,7 @@ export default function LoginModal({ open, onClose }) {
 						justifyContent: "center",
 						alignItems: "center",
 						gap: 1,
-						backgroundColor: "background.default",
+						backgroundColor: "background.paper",
 					}}
 				>
 					<Typography variant="body2" sx={{ color: "primary.main" }}>

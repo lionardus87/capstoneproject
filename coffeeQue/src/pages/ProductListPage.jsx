@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import {
 	Box,
@@ -14,16 +14,14 @@ import ProductCard from "../components/ProductCard";
 import EditProductModal from "../components/modals/EditProductModal";
 import { useProducts } from "../contexts/ProductsContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useModal } from "../contexts/ModalContext";
 
 export default function ProductListPage() {
 	const { venueId } = useParams();
 	const { products, isLoading, error, refreshProducts } = useProducts();
 	const { auth } = useAuth();
 	const isAdminOwner = auth.isLogin && auth.user?.role === "admin";
-
-	const [editModalOpen, setEditModalOpen] = useState(false);
-	const [selectedProduct, setSelectedProduct] = useState(null);
-	const [addModalOpen, setAddModalOpen] = useState(false);
+	const { openModal } = useModal();
 
 	useEffect(() => {
 		if (auth.isLoading) return;
@@ -35,31 +33,9 @@ export default function ProductListPage() {
 		}
 	}, [auth.isLoading, isAdminOwner, venueId]);
 
-	// Edit product modal handlers
-	const handleEditProduct = (product) => {
-		setSelectedProduct(product);
-		setEditModalOpen(true);
-	};
-	const handleCloseEditModal = () => {
-		setEditModalOpen(false);
-		setSelectedProduct(null);
-	};
-	const handleSaveEdit = () => {
-		refreshProducts();
-		handleCloseEditModal();
-	};
-
-	// Add product modal handlers
-	const handleOpenAddModal = () => setAddModalOpen(true);
-	const handleCloseAddModal = () => setAddModalOpen(false);
-	const handleSaveAdd = () => {
-		refreshProducts();
-		handleCloseAddModal();
-	};
-
-	// Filters (unchanged)
-	const [categoryFilter, setCategoryFilter] = useState("all");
-	const [searchTerm, setSearchTerm] = useState("");
+	// Filters category and search bar
+	const [categoryFilter, setCategoryFilter] = React.useState("all");
+	const [searchTerm, setSearchTerm] = React.useState("");
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -80,14 +56,14 @@ export default function ProductListPage() {
 	if (error) return <Typography color="error">{error}</Typography>;
 
 	return (
-		<Container sx={{ py: 6, bgcolor: "#F7F9F3", minHeight: "100vh" }}>
+		<Container sx={{ py: 6, bgcolor: "background.default", minHeight: "100vh" }}>
 			<Box
 				display="flex"
 				justifyContent="space-between"
 				alignItems="center"
 				mb={4}
 			>
-				<Typography variant="h4" fontWeight="bold" color="#435A12">
+				<Typography variant="h4" fontWeight="bold" color="primary.main">
 					Menu
 				</Typography>
 
@@ -95,13 +71,17 @@ export default function ProductListPage() {
 					<Button
 						variant="contained"
 						startIcon={<AddIcon />}
-						onClick={handleOpenAddModal}
+						onClick={() =>
+							openModal("addModal", {
+								refreshProducts,
+							})
+						}
 						sx={{
-							backgroundColor: "#7E8E20",
-							color: "#fff",
+							backgroundColor: "secondary.main",
+							color: "common.white",
 							textTransform: "none",
 							fontWeight: "bold",
-							"&:hover": { backgroundColor: "#5E6F1A" },
+							"&:hover": { backgroundColor: "secondary.dark" },
 						}}
 					>
 						Add Product
@@ -145,30 +125,17 @@ export default function ProductListPage() {
 						<ProductCard
 							key={product._id}
 							product={product}
-							onEdit={handleEditProduct}
+							onEdit={() =>
+								openModal("editModal", {
+									product,
+									refreshProducts,
+									isAdmin: isAdminOwner,
+								})
+							}
 						/>
 					))}
 				</Grid>
 			)}
-
-			{/* Edit Product Modal */}
-			{selectedProduct && (
-				<EditProductModal
-					open={editModalOpen}
-					onClose={handleCloseEditModal}
-					product={selectedProduct}
-					onSave={handleSaveEdit}
-					refreshProducts={refreshProducts}
-					isAdmin={isAdminOwner}
-				/>
-			)}
-
-			{/* Add Product Modal */}
-			<AddProductModal
-				open={addModalOpen}
-				onClose={handleCloseAddModal}
-				onSave={handleSaveAdd}
-			/>
 		</Container>
 	);
 }

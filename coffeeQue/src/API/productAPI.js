@@ -19,13 +19,15 @@ export const addProduct = async (venueId, data) => {
 // Public products
 export const fetchAllPublicProducts = (venueId) => {
 	if (!venueId) throw new Error("venueId is required to fetch products");
-	return axiosInstance.get(`/venues/${venueId}/products`);
+	const data = axiosInstance.get(`/venues/${venueId}/products`);
+	return data;
 };
 
 // Admin-only products
 export const fetchAdminVenueProducts = async (venueId) => {
 	if (!venueId) throw new Error("venueId is missing");
-	return await axiosInstance.get(`/admin/venues/${venueId}/products`);
+	const data = await axiosInstance.get(`/admin/venues/${venueId}/products`);
+	return data;
 };
 
 // Update product

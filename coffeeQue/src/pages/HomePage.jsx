@@ -135,33 +135,6 @@ export default function HomePage() {
 				</Container>
 			</Box>
 
-			{/* About Us */}
-			<Box sx={{ py: 4, px: 2 }}>
-				<Container maxWidth="md" sx={{ textAlign: "center" }}>
-					<Typography
-						variant="h4"
-						fontWeight="bold"
-						gutterbottom="true"
-						color="#435A12"
-						sx={{ fontFamily: "'Playfair Display', serif" }}
-					>
-						About CoffeeQue
-					</Typography>
-					<Typography variant="body1" color="text.secondary" paragraph>
-						CoffeeQue was born from the hustle of daily commutes and the love of a
-						perfectly brewed cup. We believe no one should have to choose between
-						great coffee and their time. Our mission is to eliminate the wait, reduce
-						the friction, and bring coffee-lovers closer to the cafés they love.
-					</Typography>
-					<Typography variant="body1" color="text.secondary">
-						With CoffeeQue, you can skip the line, order in advance, and have your
-						drink waiting for you — piping hot and just the way you like it. Whether
-						you're heading to work or taking a break, we help you reclaim your time
-						without compromising on quality.
-					</Typography>
-				</Container>
-			</Box>
-			<Divider sx={{ my: 4 }} />
 			{/* Products Section */}
 			<Box sx={{ py: 5, px: 2, textAlign: "center" }}>
 				<Container maxWidth="md">

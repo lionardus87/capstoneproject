@@ -92,6 +92,11 @@ export default function Navbar() {
 					key: "status",
 					label: "Order Status",
 					onClick: () => handleNavigate(`/member/${auth.user._id}/orders`),
+				},
+				{
+					key: "register-venue",
+					label: "Register Venue",
+					onClick: () => handleNavigate(`/register-venue`),
 				}
 			);
 		}

@@ -14,9 +14,24 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
 
-	//Check for existing user
+	//Check for existing username or email
 	const existingUser = await findUser({ $or: [{ username }, { email }] });
-	if (existingUser) return null;
+
+	if (existingUser) {
+		if (existingUser.username === username) {
+			const err = new Error("Username already exists");
+			err.field = "username";
+			throw err;
+		}
+		if (existingUser.email === email) {
+			const err = new Error("Email already exists");
+			err.field = "email";
+			throw err;
+		}
+		const err = new Error("User already exists");
+		err.field = "root";
+		throw err;
+	}
 
 	//Hash and save
 	const hashedPassword = await bcrypt.hash(password, 10);

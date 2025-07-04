@@ -9,6 +9,8 @@ import ProductListPage from "../pages/ProductListPage";
 import ProtectedRoute from "./ProtectedRouter";
 import VenuesListPage from "../pages/VenuesListPage";
 import OrdersPage from "../pages/OrdersPage";
+import ReviewPage from "../pages/ReviewPage";
+import AdminSupportPage from "../pages/AdminSupportPage";
 
 export default function AppRouter() {
 	return (
@@ -21,12 +23,14 @@ export default function AppRouter() {
 				<Route path="/register-venue" element={<RegisterVenuePage />} />
 				<Route path="/venues" element={<VenuesListPage />} />
 				<Route path="/venues/:venueId/products" element={<ProductListPage />} />
+				<Route path="/review" element={<ReviewPage />} />
 				<Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
 					<Route
 						path="/admin/venues/:venueId/products"
 						element={<ProductListPage />}
 					/>
 					<Route path="/admin/venues/:venueId/orders" element={<OrdersPage />} />
+					<Route path="/admin/support" element={<AdminSupportPage />} />
 				</Route>
 				<Route element={<ProtectedRoute allowedRoles={["member"]} />}>
 					<Route path="/venues" element={<VenuesListPage />} />

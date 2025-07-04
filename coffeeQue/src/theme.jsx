@@ -12,7 +12,9 @@ const theme = createTheme({
 		},
 		background: {
 			default: "#F7F9F3", // Light background
-			paper: "#DCE5D2", // For cards and modals
+			paper: "#DCE5D2", // For cards, dialog and modals
+			textfield: "whitesmoke",
+			secondary: "fff",
 		},
 		error: {
 			main: "#D32F2F",
@@ -32,7 +34,7 @@ const theme = createTheme({
 		},
 	},
 	typography: {
-		fontFamily: `'Roboto', 'Helvetica', 'Arial', sans-serif`,
+		fontFamily: "sans-serif",
 		h1: {
 			fontWeight: 700,
 			fontSize: "2.5rem",

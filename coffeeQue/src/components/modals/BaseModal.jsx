@@ -29,7 +29,7 @@ export default function BaseModal({
 		>
 			<DialogTitle
 				sx={{
-					backgroundColor: theme.palette.background.default,
+					backgroundColor: theme.palette.background.paper,
 					color: theme.palette.primary.main,
 					fontWeight: "bold",
 					textAlign: "center",
@@ -42,7 +42,7 @@ export default function BaseModal({
 
 			<DialogContent
 				sx={{
-					backgroundColor: theme.palette.background.default,
+					backgroundColor: theme.palette.background.paper,
 					px: 4,
 					pt: 2,
 					pb: 3,
@@ -53,7 +53,7 @@ export default function BaseModal({
 
 			<DialogActions
 				sx={{
-					backgroundColor: theme.palette.background.default,
+					backgroundColor: theme.palette.background.paper,
 					justifyContent: "center",
 					px: 4,
 					py: 2,

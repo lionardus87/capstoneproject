@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const Venue = require("../models/Venue");
 
 const findUser = async (info) => {
-	console.log("info", info);
 	return await User.findOne(info).exec();
 };
 

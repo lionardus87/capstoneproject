@@ -15,6 +15,7 @@ const adminRoutes = require("./routes/adminRoute");
 const publicRoutes = require("./routes/publicRoute");
 const orderRoutes = require("./routes/orderRoute");
 const contactRoute = require("./routes/contactRoute");
+const messageRoutes = require("./routes/messageRoute");
 
 dotenv.config();
 const app = express();
@@ -45,6 +46,7 @@ app.use("/", publicRoutes); //Public venues/products
 app.use("/admin", adminRoutes); //Admin
 app.use("/", orderRoutes); // Order
 app.use("/", contactRoute); // Feedback message
+app.use("/", messageRoutes); // Support chat
 
 app.get("/", (req, res) =>
 	res.json({

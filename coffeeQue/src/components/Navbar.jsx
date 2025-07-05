@@ -100,6 +100,13 @@ export default function Navbar() {
 				}
 			);
 		}
+		if (auth.user.role === "admin" && auth.user.username === "admin") {
+			items.push({
+				key: "support",
+				label: "Support Chat",
+				onClick: () => handleNavigate(`/admin/support`),
+			});
+		}
 
 		items.push({ key: "logout", label: "Logout", onClick: handleLogout });
 		return items;

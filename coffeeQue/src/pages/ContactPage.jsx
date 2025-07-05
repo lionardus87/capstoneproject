@@ -12,9 +12,9 @@ import {
 	Badge,
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
-import { sendFeedbackMsg } from "../API/contactAPI";
+import { sendFeedbackMsg } from "../API/messageAPI";
 import { useSnackbar } from "../contexts/SnackBarContext";
-import SupportChat from "../components/SupportChat"; // 👈 Import your chat component
+import SupportChat from "../components/SupportChat";
 
 export default function ContactPage() {
 	const [formData, setFormData] = useState({

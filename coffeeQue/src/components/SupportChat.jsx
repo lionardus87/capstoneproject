@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
 	Box,
 	Typography,
@@ -7,66 +7,83 @@ import {
 	Paper,
 	Stack,
 } from "@mui/material";
-import { useSocket } from "../contexts/SocketContext";
+import { useChat } from "../contexts/ChatContext";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function SupportChat() {
-	const { socket } = useSocket();
+	const { sendMessage, filteredMessages } = useChat();
 	const { auth } = useAuth();
-	const [messages, setMessages] = useState([]);
 	const [input, setInput] = useState("");
-
-	useEffect(() => {
-		if (!socket || !auth?.user) return;
-
-		socket.emit("register_user", auth.user.username || "Guest");
-
-		socket.on("receive_message", (msg) => {
-			setMessages((prev) => [...prev, msg]);
-		});
-
-		return () => {
-			socket.off("receive_message");
-		};
-	}, [socket, auth]);
+	const messagesEndRef = useRef(null);
 
 	const handleSend = () => {
 		if (!input.trim()) return;
-		socket.emit("send_message", {
-			from: auth?.user?.username || "Guest",
-			to: "admin",
-			message: input,
-		});
+		sendMessage("admin", input);
 		setInput("");
 	};
 
+	// Scroll to bottom on new messages
+	useEffect(() => {
+		if (messagesEndRef.current) {
+			messagesEndRef.current.scrollTop = messagesEndRef.current.scrollHeight;
+		}
+	}, [filteredMessages]);
+
 	return (
-		<Paper elevation={3} sx={{ p: 2, maxWidth: 400, mx: "auto" }}>
+		<Paper elevation={3} sx={{ p: 2, maxWidth: 400 }}>
 			<Typography variant="h6">Support Chat</Typography>
+
 			<Box
+				ref={messagesEndRef}
 				sx={{
 					maxHeight: 300,
 					overflowY: "auto",
-					mt: 2,
-					mb: 1,
-					bgcolor: "#f5f5f5",
+					my: 2,
 					p: 1,
+					bgcolor: "#f5f5f5",
 					borderRadius: 2,
 				}}
 			>
-				{messages.map((msg, idx) => (
-					<Box key={idx} sx={{ my: 1 }}>
-						<Typography variant="body2" color="textSecondary">
-							<b>{msg.from}</b>: {msg.message}
-						</Typography>
-					</Box>
-				))}
+				{filteredMessages.length === 0 ? (
+					<Typography variant="body2" color="text.secondary" align="center">
+						No messages yet
+					</Typography>
+				) : (
+					filteredMessages.map((msg, idx) => {
+						const isUser = msg.from === (auth?.user?.username || "Guest");
+						return (
+							<Box key={idx} sx={{ my: 1 }}>
+								<Typography
+									variant="caption"
+									color="text.secondary"
+									sx={{ textAlign: isUser ? "right" : "left", display: "block" }}
+								>
+									{msg.from}
+								</Typography>
+								<Box sx={{ textAlign: isUser ? "right" : "left" }}>
+									<Typography
+										variant="body2"
+										sx={{
+											display: "inline-block",
+											px: 1.5,
+											py: 1,
+											bgcolor: isUser ? "#c8e6c9" : "#eeeeee",
+											borderRadius: 1,
+										}}
+									>
+										{msg.message}
+									</Typography>
+								</Box>
+							</Box>
+						);
+					})
+				)}
 			</Box>
+
 			<Stack direction="row" spacing={1}>
 				<TextField
 					size="small"
 					fullWidth
-					variant="outlined"
 					value={input}
 					onChange={(e) => setInput(e.target.value)}
 					placeholder="Type your message..."

@@ -6,36 +6,43 @@ module.exports = function (io) {
 		console.log("User connected:", socket.id);
 
 		socket.on("register_user", (username) => {
-			console.log("REGISTER EVENT FROM CLIENT:", username);
+			if (!username) return;
 			usersMap.set(username, socket.id);
 			console.log("Registered user:", username, "->", socket.id);
 			console.log("Users Map:", Array.from(usersMap.entries()));
+			logUsersMap();
 		});
 
+		// Handle incoming message
 		socket.on("send_message", async ({ from, to = "admin", message }) => {
-			console.log(`Message from ${from} to ${to}: ${message}`);
-			console.log("Users Map:", [...usersMap.entries()]);
-			const recipientSocketId = usersMap.get(to);
+			if (!from || !message) return;
 
-			const newMessage = new Message({ from, to, message });
-			await newMessage.save(); // ✅ Save to DB
+			console.log(`Message from ${from} to ${to}: ${message}`);
+
+			// Save to MongoDB
+			const savedMessage = await new Message({ from, to, message }).save();
+
+			// ✅ Save to DB
+			//const newMessage = new Message({ from, to, message });
+			//await newMessage.save();
 
 			// Emit to recipient if online
+			const recipientSocketId = usersMap.get(to);
 			if (recipientSocketId) {
 				io.to(recipientSocketId).emit("receive_message", {
 					from,
 					to,
 					message,
-					time: newMessage.time,
+					time: savedMessage.time,
 				});
 			}
 
-			// Also emit back to sender so it updates UI
+			// Emit back to sender (to update sender's UI)
 			socket.emit("receive_message", {
 				from,
 				to,
 				message,
-				time: newMessage.time,
+				time: savedMessage.time,
 			});
 		});
 
@@ -43,10 +50,16 @@ module.exports = function (io) {
 			for (const [username, id] of usersMap.entries()) {
 				if (id === socket.id) {
 					usersMap.delete(username);
+					console.log(`${username} disconnected`);
 					break;
 				}
 			}
-			console.log("User disconnected:", socket.id);
+			logUsersMap();
 		});
 	});
 };
+
+// Helper to log the current users map
+function logUsersMap() {
+	console.log("Users Map:", Array.from(usersMap.entries()));
+}

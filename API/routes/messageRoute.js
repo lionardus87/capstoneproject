@@ -1,14 +1,28 @@
 const express = require("express");
 const router = express.Router();
-const Message = require("../models/Message");
+const messageController = require("../controllers/messageController");
 
-// Fetch all messages (or only between specific users if needed)
+// Fetch messages
 router.get("/messages", async (req, res) => {
 	try {
-		const messages = await Message.find().sort({ time: 1 });
-		res.json(messages);
+		const messages = await messageController.fetchMessages();
+		res.status(200).json(messages);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch messages" });
+		const status = err.statusCode || 500;
+		res
+			.status(status)
+			.json({ message: err.message || "Failed to fetch messages" });
+	}
+});
+
+// Save new message (optional: useful if you want REST fallback for socket)
+router.post("/messages", async (req, res) => {
+	try {
+		const saved = await messageController.createMessage(req.body);
+		res.status(201).json(saved);
+	} catch (err) {
+		const status = err.statusCode || 500;
+		res.status(status).json({ message: err.message || "Failed to send message" });
 	}
 });
 

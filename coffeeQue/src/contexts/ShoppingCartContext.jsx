@@ -14,20 +14,34 @@ const cartReducer = (state, action) => {
 	switch (action.type) {
 		case "addToCart": {
 			const { item, venueId, venueName } = action;
-
 			// Check if this venue already exists
 			const existingVenue = state.find((v) => v.venueId === venueId);
 
+			const serializeAddons = (addons) =>
+				Array.isArray(addons)
+					? addons
+							.map((a) => `${a.label}:${a.price || 0}`)
+							.sort()
+							.join("|")
+					: "";
+
 			if (existingVenue) {
-				const existingItem = existingVenue.items.find((i) => i._id === item._id);
+				const existingItem = existingVenue.items.find(
+					(i) =>
+						i._id === item._id &&
+						serializeAddons(i.addons) === serializeAddons(item.addons)
+				);
+				// Item exists → update quantity
 				if (existingItem) {
-					// Item exists → update quantity
 					return state.map((v) =>
 						v.venueId === venueId
 							? {
 									...v,
 									items: v.items.map((i) =>
-										i._id === item._id ? { ...i, qty: i.qty + (item.qty || 1) } : i
+										i._id === item._id &&
+										serializeAddons(i.addons) === serializeAddons(item.addons)
+											? { ...i, qty: i.qty + (item.qty || 1) }
+											: i
 									),
 							  }
 							: v
@@ -97,12 +111,18 @@ export const CartProvider = ({ children }) => {
 			const parsed = stored ? JSON.parse(stored) : [];
 
 			return parsed.map((entry) => {
-				if (!entry.venueId && entry.items?.[0]?.venue) {
-					const venueId = entry.items[0].venue;
+				const fixedItems = entry.items.map((item) => ({
+					...item,
+					addons: Array.isArray(item.addons) ? item.addons : [],
+				}));
+
+				if (!entry.venueId && fixedItems[0]?.venue) {
+					const venueId = fixedItems[0].venue;
 					const venueName = getVenueById(venueId)?.venueName || "Unknown Venue";
-					return { ...entry, venueId, venueName };
+					return { ...entry, venueId, venueName, items: fixedItems };
 				}
-				return entry;
+
+				return { ...entry, items: fixedItems };
 			});
 		} catch (error) {
 			console.error("Error loading cart from localStorage:", error);
@@ -130,7 +150,12 @@ export const CartProvider = ({ children }) => {
 	const addToCart = (item) => {
 		const venueId = item.venue;
 		const venueName = getVenueById(venueId)?.venueName || "Unknown Venue";
-		dispatch({ type: "addToCart", item, venueId, venueName });
+		dispatch({
+			type: "addToCart",
+			item: { ...item, addons: Array.isArray(item.addons) ? item.addons : [] },
+			venueId,
+			venueName,
+		});
 	};
 
 	return (

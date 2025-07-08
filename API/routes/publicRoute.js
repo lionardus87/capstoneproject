@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const {
 	getAllVenues,
 	getVenueProducts,
+	getAllReviews,
 } = require("../controllers/publicController");
 
 // GET all venues (public)
@@ -26,6 +27,16 @@ router.get("/venues/:venueId/products", async (req, res, next) => {
 		const products = await getVenueProducts(venueId);
 		res.status(200).json(products);
 		console.log(products);
+	} catch (err) {
+		next(err);
+	}
+});
+
+// GET all venues (public)
+router.get("/reviews", async (req, res, next) => {
+	try {
+		const reviews = await getAllReviews();
+		res.status(200).json(reviews);
 	} catch (err) {
 		next(err);
 	}

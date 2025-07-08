@@ -1,6 +1,7 @@
 const {
 	findAllVenues,
 	findProductsByVenueId,
+	findAllReviews,
 } = require("../services/publicService");
 
 const getAllVenues = async () => {
@@ -25,4 +26,13 @@ const getVenueProducts = async (venueId) => {
 	}
 };
 
-module.exports = { getAllVenues, getVenueProducts };
+const getAllReviews = async () => {
+	try {
+		const reviews = await findAllReviews();
+		return reviews;
+	} catch (err) {
+		throw new Error(`Failed to fetch reviews: ${err.message}`);
+	}
+};
+
+module.exports = { getAllVenues, getVenueProducts, getAllReviews };

@@ -2,15 +2,12 @@ import React from "react";
 import { TextField, MenuItem, Button, Stack } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { addProduct } from "../../API/productAPI";
-import useSnackbar from "../../hooks/useSnackbar";
-import { useParams } from "react-router-dom";
+import { useSnackbar } from "../../contexts/SnackBarContext";
 import BaseModal from "../modals/BaseModal";
 
 const categories = ["Drinks", "Foods"];
 
-export default function AddProductModal({ open, onClose, onSave }) {
-	// const theme = useTheme();
-	const { venueId } = useParams();
+export default function AddProductModal({ open, onClose, onSave, venueId }) {
 	const {
 		register,
 		handleSubmit,
@@ -30,6 +27,7 @@ export default function AddProductModal({ open, onClose, onSave }) {
 	const onSubmit = async (data) => {
 		try {
 			const result = await addProduct(venueId, data);
+
 			if (result?.success) {
 				showSnackbar("Item has been added to the menu", "success");
 				onSave?.(); // optional callback

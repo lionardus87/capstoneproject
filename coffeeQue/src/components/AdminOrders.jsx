@@ -31,7 +31,7 @@ export default function AdminOrders() {
 
 		return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 	};
-
+	console.log("orders", orders);
 	const handleStatusUpdate = async (orderId, newStatus) => {
 		await updateOrderStatus(orderId, newStatus);
 		showSnackbar(`Order marked as ${newStatus}`, "success");
@@ -72,8 +72,32 @@ export default function AdminOrders() {
 							{order.products.map((item, idx) => (
 								<React.Fragment key={idx}>
 									<ListItem>
-										<ListItemText primary={`${item.product.itemName} x${item.qty}`} />
-										<Typography>${(item.product.price * item.qty).toFixed(2)}</Typography>
+										<ListItemText
+											primary={`${item.product.itemName} x${item.qty}`}
+											secondary={
+												item.addons?.length > 0 && (
+													<Box component="ul" sx={{ pl: 2, mb: 0 }}>
+														{item.addons.map((addon, idx) => (
+															<li key={idx}>
+																<Typography variant="body2" color="text.secondary">
+																	{addon.label}
+																	{addon.price ? ` +$${addon.price.toFixed(2)}` : ""}
+																</Typography>
+															</li>
+														))}
+													</Box>
+												)
+											}
+										/>
+
+										<Typography>
+											$
+											{(
+												(item.product.price +
+													(item.addons?.reduce((sum, a) => sum + (a.price || 0), 0) || 0)) *
+												item.qty
+											).toFixed(2)}
+										</Typography>
 									</ListItem>
 									<Divider component="li" />
 								</React.Fragment>

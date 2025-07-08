@@ -74,6 +74,7 @@ export default function ProductListPage() {
 						onClick={() =>
 							openModal("addModal", {
 								refreshProducts,
+								venueId,
 							})
 						}
 						sx={{
@@ -130,6 +131,7 @@ export default function ProductListPage() {
 									product,
 									refreshProducts,
 									isAdmin: isAdminOwner,
+									venueId,
 								})
 							}
 						/>

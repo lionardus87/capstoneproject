@@ -3,7 +3,6 @@ const {
 	createOrder,
 	findOrderByVenue,
 	findOrdersByMember,
-
 	findOrderById,
 } = require("../services/orderService");
 
@@ -16,12 +15,13 @@ const placeOrder = async (groupedItems, userId) => {
 	}
 
 	const populatedItems = await Promise.all(
-		items.map(async ({ productId, qty }) => {
+		items.map(async ({ productId, qty, addons }) => {
 			const product = await findProductById(productId);
 			if (!product) throw new Error(`Product ${productId} not found`);
 			return {
 				product: product._id,
 				qty,
+				addons: addons || [],
 			};
 		})
 	);

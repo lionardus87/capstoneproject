@@ -26,14 +26,11 @@ const findOrdersByMember = async (memberId) => {
 };
 
 const findOrderById = async (orderId) => {
-	return await Order.findById(orderId);
+	return await Order.findById(orderId)
+		.populate("member", "username email")
+		.populate("venue", "venueName")
+		.populate("products.product", "itemName price");
 };
-
-// const updateOrderStatusInDB = async (orderId, order) => {
-// 	return await Order.findByIdAndUpdate(orderId, order, { new: true })
-// 		.populate("member", "username email")
-// 		.populate("products.product", "itemName price");
-// };
 
 module.exports = {
 	findProductById,

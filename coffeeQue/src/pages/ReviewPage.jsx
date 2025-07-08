@@ -10,6 +10,8 @@ import {
 	Paper,
 } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
+import { submitReview } from "../API/reviewAPI";
+import { useSnackbar } from "../contexts/SnackBarContext";
 
 export default function ReviewPage() {
 	const {
@@ -23,11 +25,21 @@ export default function ReviewPage() {
 			message: "",
 		},
 	});
+	const { showSnackbar } = useSnackbar();
 
-	const onSubmit = (data) => {
-		console.log("Review submitted:", data);
-		// TODO: Implement review submission logic (API call)
-		reset(); // Clear the form
+	const onSubmit = async (data) => {
+		try {
+			const result = await submitReview(data);
+			if (result?.success) {
+				showSnackbar("Thank you for leaving us a review", "success");
+				reset();
+			} else {
+				showSnackbar("Submit failed!", "error");
+			}
+		} catch (err) {
+			console.error(err);
+			showSnackbar(err.message || "Unexpected error", "error");
+		}
 	};
 
 	return (

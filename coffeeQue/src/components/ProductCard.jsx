@@ -11,10 +11,12 @@ import {
 } from "@mui/material";
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/ShoppingCartContext";
+import { useModal } from "../contexts/ModalContext";
 
 export default function ProductCard({ product, onEdit }) {
 	const { auth } = useAuth();
 	const { addToCart } = useCart();
+	const { openModal } = useModal();
 
 	const [qty, setQty] = useState(1);
 
@@ -29,7 +31,16 @@ export default function ProductCard({ product, onEdit }) {
 		if (!quantity || quantity < 1) return;
 
 		addToCart({ ...product, qty: quantity });
+
 		setQty("1");
+	};
+	const handleAddWithAddons = () => {
+		openModal("addon", {
+			product,
+			onConfirm: (productWithAddons, addons) => {
+				addToCart({ ...productWithAddons, addons, qty: 1 });
+			},
+		});
 	};
 
 	return (
@@ -82,16 +93,29 @@ export default function ProductCard({ product, onEdit }) {
 								inputProps={{ min: 1 }}
 								value={qty}
 								onChange={(e) => setQty(e.target.value)}
-								sx={{ mt: 1, mb: 1, width: "100%" }}
+								sx={{ my: 1, width: "100%" }}
 							/>
-							<Button
-								size="small"
-								variant="outlined"
-								fullWidth
-								onClick={handleAddToCart}
-							>
-								Add to cart
-							</Button>
+
+							{product.category === "Drinks" ? (
+								<Button
+									size="small"
+									variant="contained"
+									fullWidth
+									color="secondary"
+									onClick={handleAddWithAddons}
+								>
+									Add to Cart
+								</Button>
+							) : (
+								<Button
+									size="small"
+									variant="outlined"
+									fullWidth
+									onClick={handleAddToCart}
+								>
+									Add to Cart
+								</Button>
+							)}
 						</>
 					)}
 				</CardActions>

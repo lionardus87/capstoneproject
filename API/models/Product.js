@@ -1,5 +1,22 @@
 const mongoose = require("mongoose");
 
+const addonOptionSchema = new mongoose.Schema(
+	{
+		label: { type: String, required: true },
+		price: { type: Number, default: 0 },
+	},
+	{ _id: false }
+);
+
+const addonGroupSchema = new mongoose.Schema(
+	{
+		name: { type: String, required: true }, // e.g. "Size", "Milk", "Sugar"
+		required: { type: Boolean, default: false },
+		options: [addonOptionSchema],
+	},
+	{ _id: false }
+);
+
 const productSchema = new mongoose.Schema(
 	{
 		itemName: {
@@ -31,6 +48,10 @@ const productSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Venue",
 			required: true,
+		},
+		addons: {
+			type: [addonGroupSchema],
+			default: [],
 		},
 	},
 	{ timestamps: true }

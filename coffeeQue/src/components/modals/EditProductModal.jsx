@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+// import { useParams } from "react-router-dom";
 import {
 	Box,
 	Button,
@@ -25,8 +25,9 @@ export default function EditProductModal({
 	onSave,
 	refreshProducts,
 	isAdmin,
+	venueId,
 }) {
-	const { venueId } = useParams();
+	// const { venueId } = useParams();
 	const { showSnackbar } = useSnackbar();
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 

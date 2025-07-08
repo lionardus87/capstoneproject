@@ -3,13 +3,13 @@ const messageService = require("../services/messageService");
 
 module.exports = function (io) {
 	io.on("connection", (socket) => {
-		console.log("User connected:", socket.id);
+		// console.log("User connected:", socket.id);
 
 		// Register user with socket ID
 		socket.on("register_user", (username) => {
 			if (!username) return;
 			usersMap.set(username, socket.id);
-			console.log(`Registered: ${username} → ${socket.id}`);
+			// console.log(`Registered: ${username} → ${socket.id}`);
 			logUsersMap();
 		});
 

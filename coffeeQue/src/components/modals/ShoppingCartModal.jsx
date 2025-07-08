@@ -31,21 +31,14 @@ export default function ShoppingCartModal({ open, onClose }) {
 	const subtotal = cartItems.reduce(
 		(sum, venue) =>
 			sum +
-			venue.items.reduce((venueSum, item) => venueSum + item.price * item.qty, 0),
+			venue.items.reduce((venueSum, item) => {
+				const addonsTotal = Array.isArray(item.addons)
+					? item.addons.reduce((total, addon) => total + (addon.price || 0), 0)
+					: 0;
+				return venueSum + (item.price + addonsTotal) * item.qty;
+			}, 0),
 		0
 	);
-
-	// Group items by venueId for API checkout
-	// const prepareCheckoutPayload = (cartItems) => {
-	// 	const grouped = {};
-	// 	cartItems.forEach((venue) => {
-	// 		grouped[venue.venueId] = venue.items.map((item) => ({
-	// 			productId: item._id,
-	// 			qty: item.qty,
-	// 		}));
-	// 	});
-	// 	return grouped;
-	// };
 
 	const handleCheckout = async () => {
 		if (!cartItems.length) {
@@ -64,6 +57,7 @@ export default function ShoppingCartModal({ open, onClose }) {
 						items: items.map((item) => ({
 							productId: item._id,
 							qty: item.qty,
+							addons: item.addons || [],
 						})),
 					};
 					return cartCheckout(userId, payload);
@@ -132,46 +126,74 @@ export default function ShoppingCartModal({ open, onClose }) {
 									<Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
 										{venue.venueName}
 									</Typography>
-									{venue.items.map((item) => (
-										<ListItem
-											key={item._id}
-											secondaryAction={
-												<Tooltip title="Remove">
-													<IconButton
-														edge="end"
-														color="error"
-														onClick={() => removeFromCart(venue.venueId, item._id)}
-													>
-														<CloseIcon />
-													</IconButton>
-												</Tooltip>
-											}
-										>
-											<ListItemText primary={item.itemName} />
-											<Box sx={{ ml: 2 }}>
-												<Typography variant="body2" component="span">
-													Qty:
-												</Typography>
-												<TextField
-													size="small"
-													type="number"
-													value={item.qty}
-													inputProps={{ min: 1, step: 1 }}
-													onChange={(e) =>
-														updateQty(
-															venue.venueId,
-															item._id,
-															Math.max(1, Number(e.target.value))
+									{venue.items.map((item) => {
+										console.log("Cart item:", item); // 🔍 ADD THIS
+
+										return (
+											<ListItem
+												key={item._id}
+												secondaryAction={
+													<Tooltip title="Remove">
+														<IconButton
+															edge="end"
+															color="error"
+															onClick={() => removeFromCart(venue.venueId, item._id)}
+														>
+															<CloseIcon />
+														</IconButton>
+													</Tooltip>
+												}
+											>
+												<ListItemText
+													primary={
+														<Typography fontWeight="bold">{item.itemName}</Typography>
+													}
+													secondary={
+														item.addons?.length > 0 && (
+															<Box component="ul" sx={{ pl: 2, mb: 0 }}>
+																{item.addons.map((addon, idx) => (
+																	<li key={idx}>
+																		<Typography variant="body2" color="text.secondary">
+																			{addon.label}
+																			{addon.price ? ` +$${addon.price.toFixed(2)}` : ""}
+																		</Typography>
+																	</li>
+																))}
+															</Box>
 														)
 													}
-													sx={{ mx: 1, width: 50 }}
 												/>
-												<Typography variant="body2" component="span">
-													• ${item.price?.toFixed(2)}
-												</Typography>
-											</Box>
-										</ListItem>
-									))}
+												<Box sx={{ ml: 2 }}>
+													<Typography variant="body2" component="span">
+														Qty:
+													</Typography>
+													<TextField
+														size="small"
+														type="number"
+														value={item.qty}
+														inputProps={{ min: 1, step: 1 }}
+														onChange={(e) =>
+															updateQty(
+																venue.venueId,
+																item._id,
+																Math.max(1, Number(e.target.value))
+															)
+														}
+														sx={{ mx: 1, width: 50 }}
+													/>
+													<Typography variant="body2" component="span">
+														• $
+														{(
+															item.price +
+															(Array.isArray(item.addons)
+																? item.addons.reduce((sum, a) => sum + (a.price || 0), 0)
+																: 0)
+														).toFixed(2)}
+													</Typography>
+												</Box>
+											</ListItem>
+										);
+									})}
 								</Box>
 							))}
 						</List>

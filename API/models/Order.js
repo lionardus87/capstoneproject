@@ -1,5 +1,30 @@
 const mongoose = require("mongoose");
 
+// Schema for addon options inside an order product
+const orderAddonSchema = new mongoose.Schema(
+	{
+		label: { type: String, required: true }, // e.g. "Large", "Soy Milk"
+		price: { type: Number, default: 0 },
+	},
+	{ _id: false }
+);
+
+const orderProductSchema = new mongoose.Schema(
+	{
+		product: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "Product",
+			required: true,
+		},
+		qty: { type: Number, default: 1 },
+		addons: {
+			type: [orderAddonSchema],
+			default: [],
+		},
+	},
+	{ _id: false }
+);
+
 const orderSchema = new mongoose.Schema(
 	{
 		member: {
@@ -12,18 +37,11 @@ const orderSchema = new mongoose.Schema(
 			ref: "Venue",
 			required: true,
 		},
-		products: [
-			{
-				product: {
-					type: mongoose.Schema.Types.ObjectId,
-					ref: "Product",
-					required: true,
-				},
-				qty: { type: Number, default: 1 },
-				// Optional for future
-				// addOns: [{ name: String, value: String }],
-			},
-		],
+		products: {
+			type: [orderProductSchema],
+			required: true,
+			validate: [(arr) => arr.length > 0, "Order must have at least one product"],
+		},
 		status: {
 			type: String,
 			enum: [
@@ -39,7 +57,7 @@ const orderSchema = new mongoose.Schema(
 		},
 		confirmedByAdmin: { type: Boolean, default: false },
 		confirmedByMember: { type: Boolean, default: false },
-		note: String,
+		note: { type: String, default: "" },
 	},
 	{ timestamps: true }
 );

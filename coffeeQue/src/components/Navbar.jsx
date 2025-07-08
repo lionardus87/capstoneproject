@@ -77,6 +77,11 @@ export default function Navbar() {
 					key: "manage",
 					label: "Manage Order",
 					onClick: () => handleNavigate(`/admin/venues/${auth.user.venueId}/orders`),
+				},
+				{
+					key: "review",
+					label: "Leave a Review",
+					onClick: () => handleNavigate(`/review`),
 				}
 			);
 		}
@@ -97,6 +102,11 @@ export default function Navbar() {
 					key: "register-venue",
 					label: "Register Venue",
 					onClick: () => handleNavigate(`/register-venue`),
+				},
+				{
+					key: "review",
+					label: "Leave a Review",
+					onClick: () => handleNavigate(`/review`),
 				}
 			);
 		}

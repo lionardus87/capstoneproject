@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import AddProductModal from "../components/modals/AddProductModal";
 import EditProductModal from "../components/modals/EditProductModal";
+import AddOnModal from "../components/modals/AddOnModal";
 
 const ModalContext = createContext();
 
@@ -27,10 +28,14 @@ export const ModalProvider = ({ children }) => {
 					<AddProductModal
 						open={true}
 						onClose={closeModal}
+						product={modalProps.product}
 						onSave={() => {
 							modalProps.refreshProducts?.();
 							closeModal();
 						}}
+						isAdmin={modalProps.isAdmin}
+						refreshProducts={modalProps.refreshProducts}
+						venueId={modalProps.venueId}
 					/>
 				);
 
@@ -46,6 +51,18 @@ export const ModalProvider = ({ children }) => {
 							closeModal();
 						}}
 						isAdmin={modalProps.isAdmin}
+						refreshProducts={modalProps.refreshProducts}
+						venueId={modalProps.venueId}
+					/>
+				);
+
+			case "addon":
+				return (
+					<AddOnModal
+						open={true}
+						onClose={closeModal}
+						product={modalProps.product}
+						onConfirm={modalProps.onConfirm}
 					/>
 				);
 

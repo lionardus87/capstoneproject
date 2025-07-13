@@ -41,16 +41,12 @@ export default function MemberOrders() {
 	return (
 		<>
 			<Container sx={{ py: 6 }}>
-				<Typography variant="h4" mb={4} fontWeight="bold" color="#435A12">
+				<Typography variant="h4" color="text.secondary" mb={4}>
 					My Orders
 				</Typography>
 
 				{orders.map((order) => (
-					<Paper
-						key={order._id}
-						sx={{ mb: 4, p: 3, backgroundColor: "#DCE5D2", borderRadius: 3 }}
-						elevation={2}
-					>
+					<Paper key={order._id} sx={{ mb: 4, p: 3 }} elevation={2}>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
 							<Typography variant="h6">
 								Venue: {order.venue?.venueName || "N/A"}
@@ -76,7 +72,11 @@ export default function MemberOrders() {
 								<React.Fragment key={idx}>
 									<ListItem>
 										<ListItemText
-											primary={`${item.product.itemName} x${item.qty}`}
+											primary={
+												<Typography variant="body1" color="text.primary" fontWeight="bold">
+													{item.product.itemName} x{item.qty}
+												</Typography>
+											}
 											secondary={
 												item.addons?.length > 0 && (
 													<Box component="ul" sx={{ pl: 2, mb: 0 }}>

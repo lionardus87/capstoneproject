@@ -9,9 +9,7 @@ import {
 	TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import AddProductModal from "../components/modals/AddProductModal";
 import ProductCard from "../components/ProductCard";
-import EditProductModal from "../components/modals/EditProductModal";
 import { useProducts } from "../contexts/ProductsContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useModal } from "../contexts/ModalContext";
@@ -56,7 +54,15 @@ export default function ProductListPage() {
 	if (error) return <Typography color="error">{error}</Typography>;
 
 	return (
-		<Container sx={{ py: 6, bgcolor: "background.default", minHeight: "100vh" }}>
+		<Box
+			sx={{
+				py: 6,
+				px: { xs: 2, sm: 4, md: 6 },
+				bgcolor: "background.default",
+				minHeight: "100vh",
+				overflowX: "hidden",
+			}}
+		>
 			<Box
 				display="flex"
 				justifyContent="space-between"
@@ -90,30 +96,46 @@ export default function ProductListPage() {
 				)}
 			</Box>
 
-			{/* Filter Buttons */}
-			<Box mb={3}>
-				{["Drinks", "Foods", "all"].map((cat) => (
-					<Button
-						key={cat}
-						variant={categoryFilter === cat ? "contained" : "outlined"}
-						onClick={() => setCategoryFilter(cat)}
-						sx={{ mr: 1, textTransform: "capitalize" }}
-					>
-						{cat}
-					</Button>
-				))}
-			</Box>
+			{/* Filter Buttons and Search Bar */}
+			<Box
+				mb={3}
+				sx={{
+					display: "flex",
+					flexWrap: "wrap",
+					justifyContent: "space-between",
+					alignItems: "center",
+					gap: 2,
+				}}
+			>
+				{/* Filter Buttons */}
+				<Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+					{["all", "Drinks", "Foods"].map((cat) => (
+						<Button
+							key={cat}
+							variant={categoryFilter === cat ? "contained" : "outlined"}
+							onClick={() => setCategoryFilter(cat)}
+							sx={{ textTransform: "capitalize" }}
+						>
+							{cat}
+						</Button>
+					))}
+				</Box>
 
-			{/* Search Bar */}
-			<TextField
-				label="Search Products"
-				variant="outlined"
-				size="small"
-				fullWidth
-				value={searchTerm}
-				onChange={(e) => setSearchTerm(e.target.value)}
-				sx={{ mb: 4 }}
-			/>
+				{/* Search Bar */}
+				<Box sx={{ flexGrow: 1, maxWidth: { xs: "100%", sm: "250px" } }}>
+					<TextField
+						fullWidth
+						label="Search Products"
+						variant="outlined"
+						size="small"
+						value={searchTerm}
+						onChange={(e) => setSearchTerm(e.target.value)}
+						sx={{
+							backgroundColor: "whitesmoke",
+						}}
+					/>
+				</Box>
+			</Box>
 
 			{/* Products Grid */}
 			{filteredProducts.length === 0 ? (
@@ -138,6 +160,6 @@ export default function ProductListPage() {
 					))}
 				</Grid>
 			)}
-		</Container>
+		</Box>
 	);
 }

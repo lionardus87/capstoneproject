@@ -123,12 +123,10 @@ export default function ShoppingCartModal({ open, onClose }) {
 						<List sx={{ mt: 2 }}>
 							{cartItems.map((venue) => (
 								<Box key={venue.venueId} sx={{ mb: 2 }}>
-									<Typography variant="subtitle2" sx={{ fontWeight: "bold", mb: 1 }}>
+									<Typography variant="body1" sx={{ fontWeight: "bold", mb: 1 }}>
 										{venue.venueName}
 									</Typography>
 									{venue.items.map((item) => {
-										console.log("Cart item:", item); // 🔍 ADD THIS
-
 										return (
 											<ListItem
 												key={item._id}
@@ -146,7 +144,9 @@ export default function ShoppingCartModal({ open, onClose }) {
 											>
 												<ListItemText
 													primary={
-														<Typography fontWeight="bold">{item.itemName}</Typography>
+														<Typography variant="body2" fontWeight="bold">
+															{item.itemName}
+														</Typography>
 													}
 													secondary={
 														item.addons?.length > 0 && (

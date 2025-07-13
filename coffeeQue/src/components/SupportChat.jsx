@@ -40,7 +40,7 @@ export default function SupportChat() {
 					overflowY: "auto",
 					my: 2,
 					p: 1,
-					bgcolor: "#f5f5f5",
+					bgcolor: "background.default",
 					borderRadius: 2,
 				}}
 			>

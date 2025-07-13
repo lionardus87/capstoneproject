@@ -58,44 +58,43 @@ const updateOrderStatus = async (orderId, status, user) => {
 	const order = await findOrderById(orderId);
 	if (!order) return null;
 
-	// Authorization checks:
-	if (user.role === "admin" && order.venue.toString() !== user.venueId) {
+	const orderVenueId = String(order.venue?._id || order.venue);
+	const userVenueId = String(user.venueId);
+	const orderMemberId = String(order.member?._id || order.member);
+	const userId = String(user._id);
+
+	// Admin access check
+	if (user.role === "admin" && orderVenueId !== userVenueId) {
+		console.log("Admin unauthorized:", { orderVenueId, userVenueId });
 		return null;
 	}
 
+	// Member access check
 	if (
 		user.role === "member" &&
-		order.member.toString() !== user._id &&
+		orderMemberId !== userId &&
 		!["Cancelled", "Completed"].includes(status)
 	) {
+		console.log("Member unauthorized:", { orderMemberId, userId, status });
 		return null;
 	}
 
-	// Update confirmation flags if completing
+	// Status handling
 	if (status === "Completed") {
-		if (user.role === "admin") {
-			order.confirmedByAdmin = true;
-		} else if (user.role === "member") {
-			order.confirmedByMember = true;
-		}
+		if (user.role === "admin") order.confirmedByAdmin = true;
+		if (user.role === "member") order.confirmedByMember = true;
 
 		if (order.confirmedByAdmin && order.confirmedByMember) {
 			order.status = "Completed";
 		}
 	} else {
-		// Other statuses override confirmation flags reset
 		order.status = status;
-		// Optionally reset confirmation flags if status changes from Completed back to something else
 		order.confirmedByAdmin = false;
 		order.confirmedByMember = false;
 	}
 
 	await order.save();
 
-	// await order
-	// 	.populate("member", "username email")
-	// 	.populate("venue", "venueName")
-	// 	.populate("products.product", "itemName price");
 	await order.populate([
 		{ path: "member", select: "username email" },
 		{ path: "venue", select: "venueName" },

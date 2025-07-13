@@ -98,7 +98,6 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.username}
 						helperText={errors.username?.message}
-						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -114,7 +113,6 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.email}
 						helperText={errors.email?.message}
-						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -130,7 +128,6 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.password}
 						helperText={errors.password?.message}
-						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 
@@ -144,7 +141,6 @@ export default function SignupModal({ open, onClose }) {
 						})}
 						error={!!errors.repassword}
 						helperText={errors.repassword?.message}
-						sx={{ backgroundColor: "background.textfield" }}
 						fullWidth
 					/>
 				</Stack>

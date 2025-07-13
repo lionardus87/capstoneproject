@@ -56,16 +56,13 @@ export default function VenuesListPage() {
 		);
 	}
 
+	const capitalizeWords = (str) =>
+		str.replace(/\b\w/g, (char) => char.toUpperCase());
+
 	return (
 		<Box sx={{ bgcolor: "#F7F9F3", minHeight: "100vh", py: 6 }}>
 			<Container>
-				<Typography
-					variant="h4"
-					fontWeight="bold"
-					textAlign="center"
-					mb={4}
-					color="#3E4C2C"
-				>
+				<Typography variant="h4" textAlign="center" mb={4} color="text.secondary">
 					Explore Venues
 				</Typography>
 
@@ -101,13 +98,13 @@ export default function VenuesListPage() {
 
 				{/* Venue Cards */}
 				{filteredVenues.length === 0 ? (
-					<Typography textAlign="center" color="text.secondary" mt={4}>
+					<Typography textAlign="center" color="text.primary" mt={4}>
 						No venues found.
 					</Typography>
 				) : (
 					<Grid container spacing={4}>
 						{filteredVenues.map((venue) => (
-							<Grid item xs={12} sm={6} md={4} key={venue._id}>
+							<Grid size={{ xs: 12, sm: 6, md: 4 }} key={venue._id}>
 								<Card
 									sx={{
 										cursor: "pointer",
@@ -129,11 +126,11 @@ export default function VenuesListPage() {
 										alt={venue.venueName}
 									/>
 									<CardContent>
-										<Typography variant="h6" fontWeight="bold" gutterBottom>
-											{venue.venueName}
+										<Typography variant="h4" gutterBottom>
+											{capitalizeWords(venue.venueName)}
 										</Typography>
 										<Typography variant="body2" color="text.secondary">
-											📍 {venue.city}, {venue.postcode}
+											📍 {capitalizeWords(venue.city)}, {venue.postcode}
 										</Typography>
 									</CardContent>
 								</Card>

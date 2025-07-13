@@ -139,14 +139,12 @@ export default function EditProductModal({
 							{...register("itemName", { required: "Item name is required" })}
 							error={!!errors.itemName}
 							helperText={errors.itemName?.message}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 
 						<TextField
 							label="Description"
 							{...register("description")}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 							multiline
 							rows={3}
@@ -162,7 +160,6 @@ export default function EditProductModal({
 							})}
 							error={!!errors.price}
 							helperText={errors.price?.message}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 
@@ -171,16 +168,10 @@ export default function EditProductModal({
 							{...register("category", { required: "Category is required" })}
 							error={!!errors.category}
 							helperText={errors.category?.message}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 
-						<TextField
-							label="Image URL"
-							{...register("imageUrl")}
-							sx={{ backgroundColor: "background.textfield" }}
-							fullWidth
-						/>
+						<TextField label="Image URL" {...register("imageUrl")} fullWidth />
 					</Stack>
 				</Box>
 			</BaseModal>

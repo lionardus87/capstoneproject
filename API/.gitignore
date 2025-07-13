@@ -1,3 +1,8 @@
+# Environment files
 .env
+
+# Docker Compose override files
 .compose.yml
+
+# Node modules
 node_modules/

@@ -101,7 +101,6 @@ export default function LoginModal({ open, onClose }) {
 							})}
 							error={!!errors.identifier}
 							helperText={errors.identifier?.message}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 
@@ -113,7 +112,6 @@ export default function LoginModal({ open, onClose }) {
 							})}
 							error={!!errors.password}
 							helperText={errors.password?.message}
-							sx={{ backgroundColor: "background.textfield" }}
 							fullWidth
 						/>
 					</Stack>
@@ -130,9 +128,7 @@ export default function LoginModal({ open, onClose }) {
 						backgroundColor: "background.paper",
 					}}
 				>
-					<Typography variant="body2" sx={{ color: "primary.main" }}>
-						Don't have an account?
-					</Typography>
+					<Typography variant="body2">Don't have an account?</Typography>
 					<Typography
 						component="button"
 						onClick={() => {
@@ -142,7 +138,7 @@ export default function LoginModal({ open, onClose }) {
 						sx={{
 							border: "none",
 							background: "none",
-							color: "primary.main",
+							color: "text.secondary",
 							cursor: "pointer",
 							textDecoration: "underline",
 							"&:hover": { color: "primary.dark" },

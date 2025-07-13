@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	Box,
 	TextField,
@@ -10,10 +10,9 @@ import {
 	Step,
 	StepLabel,
 	Stepper,
-	Snackbar,
-	Alert,
 } from "@mui/material";
-import ImageIcon from "@mui/icons-material/Image";
+import { useTheme } from "@mui/material/styles";
+import { useForm } from "react-hook-form";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import RestaurantIcon from "@mui/icons-material/Restaurant";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
@@ -21,191 +20,224 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useSnackbar } from "../contexts/SnackBarContext";
 import { registerVenue } from "../API/authAPI";
 
-const steps = [
-	{
-		label: "Order Received",
-		icon: <ShoppingBagIcon sx={{ color: "#7E8E20", fontSize: 40 }} />,
-	},
-	{
-		label: "Prepare Order",
-		icon: <RestaurantIcon sx={{ color: "#7E8E20", fontSize: 40 }} />,
-	},
-	{
-		label: "Customer Pickup",
-		icon: <DirectionsWalkIcon sx={{ color: "#7E8E20", fontSize: 40 }} />,
-	},
-	{
-		label: "Order Done",
-		icon: <CheckCircleIcon sx={{ color: "#7E8E20", fontSize: 40 }} />,
-	},
-];
-
 export default function RegisterVenuePage() {
-	const [formData, setFormData] = useState({
-		venueName: "",
-		city: "",
-		postcode: "",
-		logoUrl: "",
-	});
+	const theme = useTheme();
 	const { showSnackbar } = useSnackbar();
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
+	const {
+		register,
+		handleSubmit,
+		setError,
+		formState: { errors },
+		reset,
+	} = useForm({
+		defaultValues: {
+			venueName: "",
+			city: "",
+			postcode: "",
+			logoUrl: "",
+		},
+	});
 
-	const handleSubmit = async () => {
-		const missingFields = ["venueName", "city", "postcode", "logoUrl"].filter(
-			(field) => typeof formData[field] !== "string" || !formData[field].trim()
-		);
-		if (missingFields.length > 0) {
-			showSnackbar(`${missingFields.join(", ")} field(s) are missing`, "error");
-			return;
-		}
+	const steps = [
+		{
+			label: "Order Received",
+			icon: (
+				<ShoppingBagIcon
+					sx={{ color: theme.palette.secondary.main, fontSize: 40 }}
+				/>
+			),
+		},
+		{
+			label: "Prepare Order",
+			icon: (
+				<RestaurantIcon
+					sx={{ color: theme.palette.secondary.main, fontSize: 40 }}
+				/>
+			),
+		},
+		{
+			label: "Customer Pickup",
+			icon: (
+				<DirectionsWalkIcon
+					sx={{ color: theme.palette.secondary.main, fontSize: 40 }}
+				/>
+			),
+		},
+		{
+			label: "Order Done",
+			icon: (
+				<CheckCircleIcon
+					sx={{ color: theme.palette.secondary.main, fontSize: 40 }}
+				/>
+			),
+		},
+	];
+
+	const onSubmit = async (data) => {
+		const payload = {
+			...data,
+			city: data.city.toLowerCase().trim(),
+		};
 
 		try {
-			const { venueName, city, postcode, logoUrl } = formData;
-			const result = await registerVenue({
-				venueName,
-				city,
-				postcode,
-				logoUrl,
-			});
-			if (result?.success) {
+			const res = await registerVenue(payload);
+
+			if (res?.success) {
 				showSnackbar("Registration successful!", "success");
-				setFormData({
-					venueName: "",
-					city: "",
-					postcode: "",
-					logoUrl: "",
-				});
-			} else {
-				showSnackbar("Registration failed.", "error");
+				reset();
+				return;
 			}
-		} catch (error) {
+
+			if (res?.errors && typeof res.errors === "object") {
+				Object.entries(res.errors).forEach(([field, message]) => {
+					setError(field, { type: "server", message });
+				});
+				return;
+			}
+
+			showSnackbar("Registration failed.", "error");
+		} catch (err) {
 			showSnackbar(
-				"Registration failed: " + (error?.message || "Server error"),
+				`Registration failed: ${err?.message ?? "Unexpected server error"}`,
 				"error"
 			);
 		}
 	};
 
 	return (
-		<>
-			<Box sx={{ bgcolor: "#F7F9F3", minHeight: "100vh" }}>
-				{/* Hero Background Section */}
-				<Box
-					sx={{
-						px: 2,
-						py: { xs: 6, md: 8 },
-						textAlign: "center",
-						backgroundImage: `url('https://m.media-amazon.com/images/I/81PdBK+WaWL.jpg')`,
-						backgroundSize: "cover",
-						backgroundPosition: "center",
-						color: "#fff",
-					}}
-				>
-					<Container maxWidth="md">
-						<Typography
-							variant="h3"
-							fontWeight="bold"
-							sx={{ fontFamily: "'Playfair Display', serif", mb: 2 }}
-						>
-							Partner with CoffeeQue
-						</Typography>
-						<Typography variant="h6">
-							Register your venue to serve more customers, faster.
-						</Typography>
-					</Container>
-				</Box>
-
-				<Container maxWidth="sm" sx={{ pb: 5 }}>
-					{/* Register Form */}
-					<Paper
-						elevation={3}
-						sx={{ p: 4, borderRadius: 3, bgcolor: "#fff", mt: 6 }}
-					>
-						<Typography
-							variant="h4"
-							align="center"
-							fontWeight="bold"
-							color="#435A12"
-							gutterBottom
-						>
-							Register My Venue
-						</Typography>
-
-						<Stack spacing={3} mt={3}>
-							<TextField
-								label="Venue Name"
-								name="venueName"
-								value={formData.venueName}
-								onChange={handleChange}
-							/>
-							<TextField
-								label="City"
-								name="city"
-								value={formData.city}
-								onChange={handleChange}
-							/>
-							<TextField
-								label="Postcode"
-								name="postcode"
-								value={formData.postcode}
-								onChange={handleChange}
-							/>
-
-							<TextField
-								label="Logo Image URL"
-								name="logoUrl"
-								value={formData.logoUrl}
-								onChange={handleChange}
-							/>
-
-							<Button
-								variant="contained"
-								onClick={handleSubmit}
-								sx={{
-									mt: 2,
-									backgroundColor: "#7E8E20",
-									color: "#fff",
-									textTransform: "none",
-									"&:hover": {
-										backgroundColor: "#5E6F1A",
-									},
-								}}
-							>
-								Register Venue
-							</Button>
-						</Stack>
-					</Paper>
-
-					{/* Order Status Progress */}
-					<Box my={5}>
-						<Typography
-							variant="h5"
-							align="center"
-							fontWeight="bold"
-							color="#435A12"
-							sx={{ mb: 3 }}
-						>
-							Order Status Steps
-						</Typography>
-						<Stepper activeStep={3} alternativeLabel>
-							{steps.map((step, index) => (
-								<Step key={index}>
-									<StepLabel icon={step.icon}>
-										<Typography fontSize={14}>{step.label}</Typography>
-									</StepLabel>
-								</Step>
-							))}
-						</Stepper>
-					</Box>
+		<Box sx={{ bgcolor: theme.palette.background.default, minHeight: "100vh" }}>
+			{/* Hero Banner */}
+			<Box
+				sx={{
+					px: 2,
+					py: { xs: 6, md: 8 },
+					textAlign: "center",
+					backgroundImage:
+						"url('https://m.media-amazon.com/images/I/81PdBK+WaWL.jpg')",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					color: theme.palette.common.white,
+				}}
+			>
+				<Container maxWidth="md">
+					<Typography variant="h1" sx={{ mb: 2 }}>
+						Partner with CoffeeQue
+					</Typography>
+					<Typography variant="body1">
+						Register your venue to serve more customers, faster.
+					</Typography>
 				</Container>
 			</Box>
-		</>
+
+			{/* Form Card */}
+			<Container maxWidth="sm" sx={{ pb: 5 }}>
+				<Paper elevation={3} sx={{ p: 4, mt: 6 }}>
+					<Typography
+						variant="h4"
+						align="center"
+						color={theme.palette.primary.main}
+						gutterBottom
+					>
+						Register My Venue
+					</Typography>
+
+					<Stack
+						spacing={3}
+						mt={3}
+						component="form"
+						onSubmit={handleSubmit(onSubmit)}
+					>
+						{/* Venue Name */}
+						<TextField
+							label="Venue Name"
+							fullWidth
+							{...register("venueName", {
+								required: "Venue name is required",
+								minLength: { value: 2, message: "Must be at least 2 characters" },
+							})}
+							error={!!errors.venueName}
+							helperText={errors.venueName?.message}
+						/>
+
+						{/* City */}
+						<TextField
+							label="City"
+							fullWidth
+							{...register("city", {
+								required: "City is required",
+								pattern: {
+									value: /^[a-zA-Z\s'-]+$/,
+									message: "Only letters and spaces are allowed",
+								},
+							})}
+							error={!!errors.city}
+							helperText={errors.city?.message}
+						/>
+
+						{/* Postcode */}
+						<TextField
+							label="Postcode"
+							fullWidth
+							{...register("postcode", {
+								required: "Postcode is required",
+								pattern: {
+									value: /^\d{4}$/,
+									message: "Postcode must be 4 digits",
+								},
+							})}
+							error={!!errors.postcode}
+							helperText={errors.postcode?.message}
+						/>
+
+						{/* Logo URL */}
+						<TextField
+							label="Logo Image URL"
+							fullWidth
+							{...register("logoUrl", {
+								required: "Logo image URL is required",
+								pattern: {
+									value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i,
+									message: "Enter a valid image URL",
+								},
+							})}
+							error={!!errors.logoUrl}
+							helperText={errors.logoUrl?.message}
+						/>
+
+						{/* Submit */}
+						<Button
+							variant="contained"
+							color="secondary"
+							type="submit"
+							sx={{ mt: 2 }}
+						>
+							Register Venue
+						</Button>
+					</Stack>
+				</Paper>
+
+				{/* Order Progress Demo */}
+				<Box my={5}>
+					<Typography
+						variant="h4"
+						align="center"
+						color={theme.palette.text.secondary}
+						sx={{ mb: 3 }}
+					>
+						Order Status Steps
+					</Typography>
+					<Stepper activeStep={3} alternativeLabel>
+						{steps.map((step, idx) => (
+							<Step key={idx}>
+								<StepLabel icon={step.icon}>
+									<Typography variant="body2">{step.label}</Typography>
+								</StepLabel>
+							</Step>
+						))}
+					</Stepper>
+				</Box>
+			</Container>
+		</Box>
 	);
 }

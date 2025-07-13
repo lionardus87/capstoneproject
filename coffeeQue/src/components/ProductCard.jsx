@@ -34,6 +34,7 @@ export default function ProductCard({ product, onEdit }) {
 
 		setQty("1");
 	};
+
 	const handleAddWithAddons = () => {
 		openModal("addon", {
 			product,
@@ -43,8 +44,11 @@ export default function ProductCard({ product, onEdit }) {
 		});
 	};
 
+	const capitalizeWords = (str) =>
+		str.replace(/\b\w/g, (char) => char.toUpperCase());
+
 	return (
-		<Grid item xs={12} sm={6} md={4}>
+		<Grid container spacing={1} size={{ xs: 12, sm: 4, md: 3, lg: 2 }}>
 			<Card
 				sx={{
 					height: "100%",
@@ -60,9 +64,7 @@ export default function ProductCard({ product, onEdit }) {
 					alt={product.itemName}
 				/>
 				<CardContent sx={{ flexGrow: 1 }}>
-					<Typography variant="h6" fontWeight="bold">
-						{product.itemName}
-					</Typography>
+					<Typography variant="h6">{capitalizeWords(product.itemName)}</Typography>
 					<Typography variant="body2" color="text.secondary" noWrap>
 						{product.description || "No description"}
 					</Typography>

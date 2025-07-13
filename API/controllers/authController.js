@@ -14,6 +14,9 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
 
+	username = username.trim().toLowerCase();
+	email = email.trim().toLowerCase();
+
 	//Check for existing username or email
 	const existingUser = await findUser({ $or: [{ username }, { email }] });
 
@@ -45,24 +48,31 @@ const register = async (userBody) => {
 
 const registerVenue = async (venueData, userId) => {
 	const { venueName, city, postcode, logoUrl } = venueData;
-	console.log("Register payload:", venueData);
-	console.log("Register payload:", userId);
 
-	//Check for existing venue
-	const existingVenue = await findVenue({ venueName });
+	const normalizedCity = city.trim().toLowerCase();
+	const normalizedPostcode = postcode.trim();
+	const trimmedVenueName = venueName.trim().toLowerCase();
+
+	// Check for existing venue with same name and location
+	const existingVenue = await findVenue({
+		venueName: trimmedVenueName,
+		city: normalizedCity,
+		postcode: normalizedPostcode,
+	});
 
 	if (existingVenue) {
-		return { error: "Venue name already taken" };
+		return { error: "Venue already registered at this location" };
 	}
 
 	const venue = await createVenue({
-		venueName,
-		city,
-		postcode,
-		logoUrl,
+		venueName: trimmedVenueName,
+		city: normalizedCity,
+		postcode: normalizedPostcode,
+		logoUrl: logoUrl.trim(),
 		admin: userId,
 	});
-	const updateRole = await updateUserRole(userId, "admin");
+
+	await updateUserRole(userId, "admin");
 	return venue;
 };
 

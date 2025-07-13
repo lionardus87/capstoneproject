@@ -15,9 +15,9 @@ import {
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useNavigate } from "react-router";
+import { useTheme } from "@mui/material/styles";
 
 import logo from "../assets/CQ.png";
-
 import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/ShoppingCartContext";
 import { useModal } from "../contexts/ModalContext";
@@ -28,14 +28,19 @@ import ShoppingCartModal from "./modals/ShoppingCartModal";
 
 export default function Navbar() {
 	const navigate = useNavigate();
+	const theme = useTheme();
+
 	const { auth, authDispatch } = useAuth();
 	const { cartItems } = useCart();
 	const { openModal, modal, closeModal } = useModal();
 	const { showSnackbar } = useSnackbar();
 
-	const [anchorEl, setAnchorEl] = useState(null);
+	const isAdmin = auth?.user?.role === "admin";
+	const isMember = auth?.user?.role === "member";
 
+	const [anchorEl, setAnchorEl] = useState(null);
 	const isMenuOpen = Boolean(anchorEl);
+
 	const totalQty = useMemo(
 		() =>
 			cartItems.reduce(
@@ -65,7 +70,7 @@ export default function Navbar() {
 
 		const items = [];
 
-		if (auth.user.role === "admin" && auth.user?.venueId) {
+		if (isAdmin && auth.user?.venueId) {
 			items.push(
 				{
 					key: "menu",
@@ -86,7 +91,7 @@ export default function Navbar() {
 			);
 		}
 
-		if (auth.user.role === "member") {
+		if (isMember) {
 			items.push(
 				{
 					key: "orders",
@@ -110,7 +115,8 @@ export default function Navbar() {
 				}
 			);
 		}
-		if (auth.user.role === "admin" && auth.user.username === "admin") {
+
+		if (isAdmin && auth.user.username === "admin") {
 			items.push({
 				key: "support",
 				label: "Support Chat",
@@ -127,7 +133,11 @@ export default function Navbar() {
 			<AppBar
 				position="static"
 				elevation={0}
-				sx={{ backgroundColor: "#DCE5D2", color: "#435A12", py: 1.5 }}
+				sx={{
+					backgroundColor: theme.palette.background.paper,
+					color: theme.palette.primary.main,
+					py: 1.5,
+				}}
 			>
 				<Toolbar sx={{ justifyContent: "space-between" }}>
 					<ButtonBase onClick={() => navigate("/")}>
@@ -138,11 +148,12 @@ export default function Navbar() {
 							sx={{ height: 50, mr: 2, borderRadius: "50%", objectFit: "cover" }}
 						/>
 					</ButtonBase>
+
 					<Stack direction="row" spacing={2} alignItems="center">
-						{auth.user?.role === "member" && (
+						{isMember && (
 							<IconButton
 								onClick={() => openModal("shoppingCart")}
-								sx={{ color: "#435A12" }}
+								sx={{ color: theme.palette.primary.main }}
 							>
 								<Badge
 									badgeContent={totalQty > 0 ? totalQty : null}
@@ -159,14 +170,18 @@ export default function Navbar() {
 							<>
 								<IconButton
 									onClick={handleMenuClick}
-									sx={{ color: "#435A12" }}
+									sx={{ color: theme.palette.primary.main }}
 									size="large"
 								>
 									<AccountCircleIcon fontSize="large" />
 								</IconButton>
 								<Typography
 									onClick={handleMenuClick}
-									sx={{ cursor: "pointer", fontWeight: "bold", color: "#435A12" }}
+									sx={{
+										cursor: "pointer",
+										fontWeight: "bold",
+										color: theme.palette.primary.main,
+									}}
 								>
 									{auth.user?.username || "User"}
 								</Typography>
@@ -176,13 +191,16 @@ export default function Navbar() {
 								startIcon={<AccountCircleIcon />}
 								onClick={() => openModal("login")}
 								sx={{
-									backgroundColor: "#fff",
-									color: "#435A12",
+									backgroundColor: theme.palette.common.white,
+									color: theme.palette.primary.main,
 									borderRadius: "20px",
 									textTransform: "none",
 									px: 2,
 									fontWeight: "bold",
-									"&:hover": { backgroundColor: "#5E6F1A", color: "#fff" },
+									"&:hover": {
+										backgroundColor: theme.palette.primary.dark,
+										color: theme.palette.primary.contrastText,
+									},
 								}}
 							>
 								Login
@@ -207,7 +225,6 @@ export default function Navbar() {
 			</Menu>
 
 			<LoginModal open={modal === "login"} onClose={closeModal} />
-
 			<ShoppingCartModal open={modal === "shoppingCart"} onClose={closeModal} />
 		</>
 	);

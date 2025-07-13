@@ -27,17 +27,13 @@ router.post("/register", async (req, res) => {
 
 //Register Venue
 router.post("/registervenue", authMiddleWare, async (req, res) => {
-	console.log("Login payload:", req.body);
 	try {
 		const userId = req.user?._id;
-		console.log("Venue router response:", userId);
 		if (!userId) return res.status(401).send("Unauthorized");
 
 		const venue = await registerVenue(req.body, userId);
 		if (venue?.error) return res.status(409).send(venue.error);
-		console.log("Venue router response:", venue);
 
-		if (venue?.error) return res.status(409).send(venue.error);
 		res.status(201).json(venue);
 	} catch (err) {
 		console.error("Registration error:", err);

@@ -13,29 +13,56 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import {
-	ArrowBackIos,
-	ArrowForwardIos,
-	LocalCafe as LocalCafeIcon,
-	Restaurant as RestaurantIcon,
-} from "@mui/icons-material";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import { getTestimonials } from "../API/reviewAPI";
 import { useNavigate } from "react-router";
 
-const productFeatures = [
-	{
-		title: "Coffee",
-		description:
-			"Brewed fresh from your favorite cafés. Order ahead, skip the queue.",
-		icon: <LocalCafeIcon sx={{ fontSize: 50, color: "secondary.main" }} />,
-	},
-	{
-		title: "Food",
-		description:
-			"Delicious meals and snacks for any time of day, ready when you are.",
-		icon: <RestaurantIcon sx={{ fontSize: 50, color: "secondary.main" }} />,
-	},
-];
+const FeatureCard = ({ img, title, desc }) => {
+	const theme = useTheme();
+	return (
+		<Box
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				borderRadius: theme.shape.borderRadius,
+				overflow: "hidden",
+				boxShadow: theme.shadows[3],
+				height: 250,
+				bgcolor: "background.paper",
+			}}
+		>
+			<Box
+				component="img"
+				src={img}
+				alt={title}
+				sx={{
+					width: "100%",
+					height: "70%",
+					objectFit: "cover",
+					flexShrink: 0,
+				}}
+			/>
+			<Box
+				sx={{
+					p: 2,
+					height: "30%",
+					background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+					color: theme.palette.common.white,
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+				}}
+			>
+				<Typography variant="h6" fontWeight="bold" mb={0.5}>
+					{title}
+				</Typography>
+				<Typography variant="body2" sx={{ opacity: 0.9 }}>
+					{desc}
+				</Typography>
+			</Box>
+		</Box>
+	);
+};
 
 export default function HomePage() {
 	const [testimonials, setTestimonials] = useState([]);
@@ -59,7 +86,7 @@ export default function HomePage() {
 		loadTestimonials();
 	}, []);
 
-	const visibleCount = 2;
+	const visibleCount = 3;
 
 	const handleNext = () => {
 		setIndex((prev) => (prev + 1) % testimonials.length);
@@ -79,33 +106,32 @@ export default function HomePage() {
 	}
 
 	return (
-		<Box sx={{ bgcolor: "background.default", fontFamily: "inherit" }}>
+		<Box sx={{ bgcolor: "background.default" }}>
 			{/* Hero */}
 			<Box
 				sx={{
 					px: 2,
 					py: { xs: 8, md: 14 },
 					textAlign: "center",
-					backgroundImage: `url("https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80")`,
+					backgroundImage:
+						'url("https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=80")',
 					backgroundSize: "cover",
 					backgroundPosition: "center",
-					color: "#fff",
+					color: theme.palette.common.white,
 				}}
 			>
 				<Container maxWidth="md">
 					<Typography
-						variant="h2"
+						variant="h1"
 						fontWeight="bold"
 						sx={{
-							fontFamily: "'Playfair Display', serif",
 							textShadow: "2px 2px 6px rgba(0,0,0,0.5)",
 						}}
 					>
 						Skip the Queue
 					</Typography>
 					<Typography
-						variant="h5"
-						fontWeight={300}
+						variant="h4"
 						mt={2}
 						sx={{ textShadow: "1px 1px 4px rgba(0,0,0,0.4)" }}
 					>
@@ -117,7 +143,7 @@ export default function HomePage() {
 						size="large"
 						onClick={() => navigate("/venues")}
 						sx={{
-							mt: 5,
+							mt: theme.spacing(5),
 							borderRadius: 6,
 							px: 5,
 							py: 1.5,
@@ -138,54 +164,62 @@ export default function HomePage() {
 					py: 8,
 					px: 2,
 					textAlign: "center",
-					backgroundColor: "background.default",
+					bgcolor: "background.default",
 				}}
 			>
-				<Container maxWidth="md">
-					<Typography
-						variant="h4"
-						fontWeight="bold"
-						color="primary.main"
-						sx={{ fontFamily: "'Playfair Display', serif", mb: 3 }}
-					>
+				<Container maxWidth="xl">
+					<Typography variant="h4" color="text.secondary" sx={{ mb: 3 }}>
 						What We Offer
 					</Typography>
 					<Typography
 						variant="body1"
-						color="text.secondary"
-						sx={{ mb: 5, maxWidth: 600, mx: "auto" }}
+						color="text.primary"
+						sx={{ mb: 5, maxWidth: 700, mx: "auto" }}
 					>
-						From a perfect morning brew to a hearty lunch, our platform helps you
-						order ahead from the best local spots — fast, fresh, and frustration-free.
+						CoffeeQue lets you skip the queue, order ahead, and enjoy your favorite
+						food and drinks from local cafés — with real-time tracking and seamless
+						pickup.
 					</Typography>
-					<Grid container spacing={4}>
-						{productFeatures.map((item, i) => (
-							<Grid key={i} item xs={12} sm={6}>
-								<Card
-									sx={{
-										p: 4,
-										borderRadius: 4,
-										textAlign: "center",
-										bgcolor: "background.paper",
-										boxShadow: 2,
-										minHeight: "200px",
-										display: "flex",
-										flexDirection: "column",
-										justifyContent: "center",
-										alignItems: "center",
-									}}
-								>
-									{item.icon}
-									<Typography variant="h6" fontWeight="bold" mt={2}>
-										{item.title}
-									</Typography>
-									<Typography variant="body2" color="text.secondary" mt={1}>
-										{item.description}
-									</Typography>
-								</Card>
+
+					<Box sx={{ maxWidth: 1200, mx: "auto" }}>
+						<Grid container spacing={1} justifyContent="center">
+							{/* Coffee */}
+							<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+								<FeatureCard
+									img="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80"
+									title="Coffee"
+									desc="Freshly brewed from your favorite cafés. Skip the queue."
+								/>
 							</Grid>
-						))}
-					</Grid>
+
+							{/* Food */}
+							<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+								<FeatureCard
+									img="https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=80"
+									title="Food"
+									desc="Hearty meals and snacks, ready when you are."
+								/>
+							</Grid>
+
+							{/* Order Ahead */}
+							<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+								<FeatureCard
+									img="https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?auto=format&fit=crop&w=800&q=80"
+									title="Order Ahead"
+									desc="Place orders before arrival. Minimize wait time and stress."
+								/>
+							</Grid>
+
+							{/* Track Orders */}
+							<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+								<FeatureCard
+									img="https://images.unsplash.com/photo-1497493292307-31c376b6e479?auto=format&fit=crop&w=800&q=80"
+									title="Track Orders"
+									desc="Stay updated with real-time order progress and pickup status."
+								/>
+							</Grid>
+						</Grid>
+					</Box>
 				</Container>
 			</Box>
 
@@ -194,7 +228,7 @@ export default function HomePage() {
 			{/* Testimonials */}
 			<Box
 				sx={{
-					pt: 10,
+					pt: 5,
 					pb: 10,
 					px: 2,
 					backgroundColor: "background.default",
@@ -202,12 +236,7 @@ export default function HomePage() {
 				}}
 			>
 				<Container maxWidth="lg">
-					<Typography
-						variant="h4"
-						fontWeight="bold"
-						color="primary.main"
-						sx={{ fontFamily: "'Playfair Display', serif", mb: 4 }}
-					>
+					<Typography variant="h4" color="text.secondary" sx={{ mb: 4 }}>
 						What people are saying
 					</Typography>
 
@@ -216,7 +245,7 @@ export default function HomePage() {
 							<CircularProgress color="secondary" />
 						</Stack>
 					) : testimonials.length === 0 ? (
-						<Typography mt={4} color="text.secondary">
+						<Typography mt={4} color="text.primary">
 							No testimonials yet.
 						</Typography>
 					) : (
@@ -250,10 +279,10 @@ export default function HomePage() {
 											maxWidth: 320,
 											px: 3,
 											py: 4,
-											borderRadius: 3,
+											borderRadius: theme.shape.borderRadius,
 											backgroundColor: "background.paper",
 											textAlign: "center",
-											boxShadow: 2,
+											boxShadow: theme.shadows[2],
 										}}
 									>
 										<Typography variant="body1" fontStyle="italic">
@@ -296,12 +325,12 @@ export default function HomePage() {
 												minWidth: { xs: "85vw", sm: 300 },
 												px: 3,
 												py: 4,
-												borderRadius: 3,
+												borderRadius: theme.shape.borderRadius,
 												backgroundColor: "background.paper",
 												textAlign: "center",
 												flexShrink: 0,
 												scrollSnapAlign: { xs: "start", sm: "center" },
-												boxShadow: 2,
+												boxShadow: theme.shadows[2],
 											}}
 										>
 											<Typography variant="body1" fontStyle="italic">

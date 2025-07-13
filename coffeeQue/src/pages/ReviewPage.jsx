@@ -9,6 +9,7 @@ import {
 	Stack,
 	Paper,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { useForm, Controller } from "react-hook-form";
 import { submitReview } from "../API/reviewAPI";
 import { useSnackbar } from "../contexts/SnackBarContext";
@@ -26,6 +27,7 @@ export default function ReviewPage() {
 		},
 	});
 	const { showSnackbar } = useSnackbar();
+	const theme = useTheme();
 
 	const onSubmit = async (data) => {
 		try {
@@ -43,7 +45,30 @@ export default function ReviewPage() {
 	};
 
 	return (
-		<Box sx={{ py: 6, bgcolor: "background.default", minHeight: "80vh" }}>
+		<Box sx={{ bgcolor: theme.palette.background.default, minHeight: "100vh" }}>
+			{/* Hero Banner */}
+			<Box
+				sx={{
+					px: 2,
+					py: { xs: 6, md: 8 },
+					mb: 5,
+					textAlign: "center",
+					backgroundImage:
+						"url('https://m.media-amazon.com/images/I/81PdBK+WaWL.jpg')",
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					color: theme.palette.common.white,
+				}}
+			>
+				<Container maxWidth="md">
+					<Typography variant="h1" sx={{ mb: 2 }}>
+						Rate Us
+					</Typography>
+					<Typography variant="body1">Leave us a rating.</Typography>
+				</Container>
+			</Box>
+
+			{/* Form Card */}
 			<Container maxWidth="md">
 				<Paper sx={{ p: 4, borderRadius: 3 }}>
 					<Typography variant="h4" mb={3} color="primary.main" fontWeight="bold">
@@ -54,7 +79,7 @@ export default function ReviewPage() {
 						<Stack spacing={3}>
 							{/* Rating */}
 							<Box>
-								<Typography variant="subtitle1" mb={1}>
+								<Typography variant="body1" mb={1}>
 									Your Rating
 								</Typography>
 								<Controller

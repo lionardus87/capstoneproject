@@ -39,8 +39,9 @@ export const registerVenue = async ({ venueName, city, postcode, logoUrl }) => {
 
 export const loginRequest = async ({ identifier, password }) => {
 	try {
+		const normalizedIdentifier = identifier.trim().toLowerCase();
 		const response = await axiosInstance.post("/auth/login", {
-			identifier,
+			identifier: normalizedIdentifier,
 			password,
 		});
 		return { success: true, ...response.data };

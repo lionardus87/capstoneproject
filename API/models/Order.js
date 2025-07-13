@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
 
-// Schema for addon options inside an order product
 const orderAddonSchema = new mongoose.Schema(
 	{
-		label: { type: String, required: true }, // e.g. "Large", "Soy Milk"
+		label: { type: String, required: true },
 		price: { type: Number, default: 0 },
 	},
 	{ _id: false }

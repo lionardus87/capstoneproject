@@ -8,7 +8,9 @@ import {
 	ListItem,
 	ListItemText,
 	Paper,
+	Container,
 } from "@mui/material";
+
 import { useChat } from "../contexts/ChatContext";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -38,12 +40,14 @@ export default function AdminChatPanel() {
 	};
 
 	return (
-		<Paper elevation={4} sx={{ p: 2, width: "100%", maxWidth: 600 }}>
+		<Paper elevation={4} sx={{ p: 2, width: "100%", maxWidth: 800 }}>
 			<Typography variant="h6">Support Chat Panel</Typography>
 
 			<Box sx={{ display: "flex", gap: 2, mt: 2 }}>
 				{/* Sidebar */}
-				<List sx={{ width: 180, borderRight: "1px solid #ccc" }}>
+				<List
+					sx={{ width: 200, color: "text.secondary", borderRight: "1px solid #ccc" }}
+				>
 					{userList.map((user) => {
 						const isSelected = selectedUser === user;
 						return (
@@ -77,7 +81,7 @@ export default function AdminChatPanel() {
 							overflowY: "auto",
 							px: 1,
 							mb: 2,
-							bgcolor: "#f9f9f9",
+							bgcolor: "background.default",
 							borderRadius: 1,
 						}}
 					>

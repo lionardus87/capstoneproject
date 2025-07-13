@@ -31,7 +31,7 @@ export default function AdminOrders() {
 
 		return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 	};
-	console.log("orders", orders);
+
 	const handleStatusUpdate = async (orderId, newStatus) => {
 		await updateOrderStatus(orderId, newStatus);
 		showSnackbar(`Order marked as ${newStatus}`, "success");
@@ -39,16 +39,16 @@ export default function AdminOrders() {
 
 	return (
 		<Container sx={{ py: 6 }}>
-			<Typography variant="h4" mb={4} fontWeight="bold" color="#435A12">
+			<Typography variant="h4" mb={4} color="text.secondary">
 				Incoming Orders
 			</Typography>
 
 			{[...orders]
-				.sort((a, b) => formatDateTime(b.createdAt) - formatDateTime(a.createdAt))
+				.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 				.map((order) => (
 					<Paper
 						key={order._id}
-						sx={{ mb: 4, p: 3, backgroundColor: "#DCE5D2", borderRadius: 3 }}
+						sx={{ mb: 4, p: 3, backgroundColor: "background.paper", borderRadius: 3 }}
 						elevation={2}
 					>
 						<Box display="flex" justifyContent="space-between" alignItems="center">
@@ -71,24 +71,29 @@ export default function AdminOrders() {
 						<List dense sx={{ mt: 2 }}>
 							{order.products.map((item, idx) => (
 								<React.Fragment key={idx}>
-									<ListItem>
-										<ListItemText
-											primary={`${item.product.itemName} x${item.qty}`}
-											secondary={
-												item.addons?.length > 0 && (
-													<Box component="ul" sx={{ pl: 2, mb: 0 }}>
-														{item.addons.map((addon, idx) => (
-															<li key={idx}>
-																<Typography variant="body2" color="text.secondary">
-																	{addon.label}
-																	{addon.price ? ` +$${addon.price.toFixed(2)}` : ""}
-																</Typography>
-															</li>
-														))}
-													</Box>
-												)
-											}
-										/>
+									<ListItem alignItems="flex-start">
+										<Box sx={{ flexGrow: 1 }}>
+											<Typography variant="body1" color="text.primary" fontWeight="bold">
+												{item.product.itemName} x{item.qty}
+											</Typography>
+
+											{item.addons?.length > 0 && (
+												<Box component="ul" sx={{ pl: 2, mb: 0, mt: 0.5 }}>
+													{item.addons.map((addon, idx) => (
+														<li key={idx}>
+															<Typography
+																variant="body2"
+																color="text.secondary"
+																component="span"
+															>
+																{addon.label}
+																{addon.price ? ` +$${addon.price.toFixed(2)}` : ""}
+															</Typography>
+														</li>
+													))}
+												</Box>
+											)}
+										</Box>
 
 										<Typography>
 											$
@@ -99,6 +104,7 @@ export default function AdminOrders() {
 											).toFixed(2)}
 										</Typography>
 									</ListItem>
+
 									<Divider component="li" />
 								</React.Fragment>
 							))}

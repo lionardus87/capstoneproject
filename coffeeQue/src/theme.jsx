@@ -1,6 +1,6 @@
+// src/theme.js
 import { createTheme } from "@mui/material/styles";
 
-// Custom CoffeeQue theme
 const theme = createTheme({
 	palette: {
 		primary: {
@@ -9,12 +9,11 @@ const theme = createTheme({
 		},
 		secondary: {
 			main: "#7E8E20", // Olive Green
+			contrastText: "#fff",
 		},
 		background: {
 			default: "#F7F9F3", // Light background
 			paper: "#DCE5D2", // For cards, dialog and modals
-			textfield: "whitesmoke",
-			secondary: "fff",
 		},
 		error: {
 			main: "#D32F2F",
@@ -31,34 +30,51 @@ const theme = createTheme({
 		text: {
 			primary: "#212121",
 			secondary: "#435A12",
+			contrastText: "#fff",
 		},
 	},
+
 	typography: {
-		fontFamily: "sans-serif",
+		fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
 		h1: {
+			fontFamily: "'Playfair Display', serif",
 			fontWeight: 700,
 			fontSize: "2.5rem",
 		},
 		h4: {
+			fontFamily: "'Playfair Display', serif",
 			fontWeight: 600,
 			fontSize: "1.75rem",
 		},
+		h6: {
+			fontFamily: "'Playfair Display', serif",
+			fontWeight: 600,
+			fontSize: "1.3rem",
+		},
 		body1: {
+			fontFamily: "Arial",
 			fontSize: "1rem",
+		},
+		body2: {
+			fontFamily: "Arial",
+			fontSize: "0.8rem",
 		},
 		button: {
 			textTransform: "none",
-			fontWeight: "bold",
+			fontWeight: 600,
 		},
 	},
+
 	shape: {
-		borderRadius: 12,
+		borderRadius: 4,
 	},
+
 	components: {
 		MuiButton: {
 			styleOverrides: {
 				root: {
 					borderRadius: 20,
+					fontWeight: 600,
 				},
 			},
 		},
@@ -66,6 +82,27 @@ const theme = createTheme({
 			styleOverrides: {
 				rounded: {
 					borderRadius: 12,
+				},
+				root: {
+					backgroundColor: "#DCE5D2",
+				},
+			},
+		},
+		MuiOutlinedInput: {
+			styleOverrides: {
+				root: {
+					backgroundColor: "whitesmoke",
+					borderRadius: 4,
+					fontFamily: "Helvetica",
+				},
+			},
+		},
+		MuiFilledInput: {
+			styleOverrides: {
+				root: {
+					backgroundColor: "whitesmoke",
+					borderRadius: 4,
+					fontFamily: "Helvetica",
 				},
 			},
 		},

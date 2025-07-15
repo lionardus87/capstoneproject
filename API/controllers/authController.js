@@ -14,9 +14,8 @@ const { privateKey, refreshTokenKey } = require("../utils/const");
 const register = async (userBody) => {
 	const { username, email, password } = userBody;
 
-	username = username.trim().toLowerCase();
-	email = email.trim().toLowerCase();
-
+	const normalizedUsername = username.trim().toLowerCase();
+	const normalizedEmail = email.trim().toLowerCase();
 	//Check for existing username or email
 	const existingUser = await findUser({ $or: [{ username }, { email }] });
 
@@ -39,8 +38,8 @@ const register = async (userBody) => {
 	//Hash and save
 	const hashedPassword = await bcrypt.hash(password, 10);
 	const user = await createUser({
-		username,
-		email,
+		username: normalizedUsername,
+		email: normalizedEmail,
 		password: hashedPassword,
 	});
 	return user;

@@ -130,9 +130,6 @@ export default function ProductListPage() {
 						size="small"
 						value={searchTerm}
 						onChange={(e) => setSearchTerm(e.target.value)}
-						sx={{
-							backgroundColor: "whitesmoke",
-						}}
 					/>
 				</Box>
 			</Box>

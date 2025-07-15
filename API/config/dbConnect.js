@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const connectDB = async () => {
-	const source = "local" || process.env.MONGO_SOURCE;
+	const source = process.env.MONGO_SOURCE || "local";
 
 	let uri;
 

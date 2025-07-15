@@ -3,8 +3,6 @@ const messageService = require("../services/messageService");
 
 module.exports = function (io) {
 	io.on("connection", (socket) => {
-		// console.log("User connected:", socket.id);
-
 		// Register user with socket ID
 		socket.on("register_user", (username) => {
 			if (!username) return;

@@ -144,7 +144,7 @@ export default function ShoppingCartModal({ open, onClose }) {
 											>
 												<ListItemText
 													primary={
-														<Typography variant="body2" fontWeight="bold">
+														<Typography variant="body2" fontWeight="bold" component="span">
 															{item.itemName}
 														</Typography>
 													}
@@ -153,7 +153,11 @@ export default function ShoppingCartModal({ open, onClose }) {
 															<Box component="ul" sx={{ pl: 2, mb: 0 }}>
 																{item.addons.map((addon, idx) => (
 																	<li key={idx}>
-																		<Typography variant="body2" color="text.secondary">
+																		<Typography
+																			variant="body2"
+																			color="text.secondary"
+																			component="span"
+																		>
 																			{addon.label}
 																			{addon.price ? ` +$${addon.price.toFixed(2)}` : ""}
 																		</Typography>

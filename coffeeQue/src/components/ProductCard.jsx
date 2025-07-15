@@ -111,7 +111,8 @@ export default function ProductCard({ product, onEdit }) {
 							) : (
 								<Button
 									size="small"
-									variant="outlined"
+									variant="contained"
+									color="secondary"
 									fullWidth
 									onClick={handleAddToCart}
 								>

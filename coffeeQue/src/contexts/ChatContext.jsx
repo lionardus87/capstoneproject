@@ -53,7 +53,8 @@ export const ChatProvider = ({ children }) => {
 			message: message.trim(),
 		};
 		socket.emit("send_message", msg);
-		setMessages((prev) => [...prev, msg]);
+		// setMessages((prev) => [...prev, msg]);
+		setSelectedUser(to);
 	};
 
 	const userList = useMemo(() => {

@@ -197,8 +197,8 @@ export default function RegisterVenuePage() {
 							{...register("logoUrl", {
 								required: "Logo image URL is required",
 								pattern: {
-									value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|svg))$/i,
-									message: "Enter a valid image URL",
+									value: /^https?:\/\/.+/i,
+									message: "Enter a valid URL starting with http or https",
 								},
 							})}
 							error={!!errors.logoUrl}

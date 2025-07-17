@@ -15,7 +15,7 @@ router.get("/messages", async (req, res) => {
 	}
 });
 
-// Save new message (optional: useful if you want REST fallback for socket)
+// Save new message
 router.post("/messages", async (req, res) => {
 	try {
 		const saved = await messageController.createMessage(req.body);

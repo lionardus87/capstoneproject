@@ -4,7 +4,7 @@ const { authMiddleWare } = require("../middlewares/authMiddleware");
 const { checkRole } = require("../middlewares/checkRole");
 
 //Public route
-router.get("/public", (req, res) => res.send("Public content"));
+router.get("/", (req, res) => res.send("Public content"));
 
 //Member route
 router.get("/member", authMiddleWare, checkRole(["member"]), (req, res) =>

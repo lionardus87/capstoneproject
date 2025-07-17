@@ -4,7 +4,6 @@ const checkVenueOwner = async (req, res, next) => {
 	try {
 		const adminId = req.user?._id;
 		const venueId = req.params.venueId;
-
 		if (!adminId || !venueId) {
 			return res.status(400).json({ message: "Missing required parameters" });
 		}

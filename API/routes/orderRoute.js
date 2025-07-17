@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authMiddleWare } = require("../middlewares/authMiddleware");
-const { checkRole } = require("../middlewares/checkRole");
-const { checkVenueOwner } = require("../middlewares/checkVenueOwner");
+const { secure } = require("../middlewares/secureAccess");
 const {
 	placeOrder,
 	getVenueOrders,
@@ -11,37 +9,28 @@ const {
 } = require("../controllers/orderController");
 
 // Member place orders
-router.post(
-	"/member/:userId/orders",
-	authMiddleWare,
-	checkRole(["member"]),
-	async (req, res) => {
-		try {
-			const userId = req.params.userId;
-			if (req.user._id !== userId) {
-				return res.status(403).json({ message: "Unauthorized" });
-			}
-			const groupedItems = req.body;
-			if (!groupedItems || typeof groupedItems !== "object") {
-				return res.status(400).json({ message: "Invalid order payload" });
-			}
-			console.log("Routerpayload", groupedItems);
-			console.log("Router user", userId);
-			const order = await placeOrder(groupedItems, userId);
-			res.status(201).json(order);
-		} catch (err) {
-			console.error("Order creation error:", err);
-			res.status(500).json({ message: "Failed to place order" });
+router.post("/member/:userId/orders", secure.member, async (req, res) => {
+	try {
+		const userId = req.params.userId;
+		if (req.user._id !== userId) {
+			return res.status(403).json({ message: "Unauthorized" });
 		}
+		const groupedItems = req.body;
+		if (!groupedItems || typeof groupedItems !== "object") {
+			return res.status(400).json({ message: "Invalid order payload" });
+		}
+		const order = await placeOrder(groupedItems, userId);
+		res.status(201).json(order);
+	} catch (err) {
+		console.error("Order creation error:", err);
+		res.status(500).json({ message: "Failed to place order" });
 	}
-);
+});
 
 // Venue receive orders
 router.get(
 	"/admin/venues/:venueId/orders",
-	authMiddleWare,
-	checkRole(["admin"]),
-	checkVenueOwner,
+	secure.adminOwner,
 	async (req, res) => {
 		try {
 			const { venueId } = req.params;
@@ -60,33 +49,25 @@ router.get(
 );
 
 // User check order status
-router.get(
-	"/member/:userId/orders",
-	authMiddleWare,
-	checkRole(["member"]),
-	async (req, res) => {
-		try {
-			const { userId } = req.params;
-
-			// Only allow the user to fetch their own orders
-			if (req.user._id !== userId) {
-				return res.status(403).json({ message: "Unauthorized" });
-			}
-
-			const orders = await getMemberOrders(userId);
-			res.status(200).json(orders);
-		} catch (err) {
-			console.error("Error fetching member orders:", err);
-			res.status(500).json({ message: "Failed to retrieve orders" });
+router.get("/member/:userId/orders", secure.member, async (req, res) => {
+	try {
+		const { userId } = req.params;
+		if (req.user._id !== userId) {
+			return res.status(403).json({ message: "Unauthorized" });
 		}
+
+		const orders = await getMemberOrders(userId);
+		res.status(200).json(orders);
+	} catch (err) {
+		console.error("Error fetching member orders:", err);
+		res.status(500).json({ message: "Failed to retrieve orders" });
 	}
-);
+});
 
 //admin and member order status
 router.patch(
 	"/orders/:orderId/status",
-	authMiddleWare,
-	checkRole(["admin", "member"]),
+	secure.adminOrMember,
 	async (req, res) => {
 		try {
 			const { orderId } = req.params;

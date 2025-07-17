@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authMiddleWare } = require("../middlewares/authMiddleware");
-const { checkRole } = require("../middlewares/checkRole");
-const { checkVenueOwner } = require("../middlewares/checkVenueOwner");
+const { secure } = require("../middlewares/secureAccess");
 const {
 	getMyProducts,
 	addProductItem,
@@ -12,48 +10,36 @@ const {
 } = require("../controllers/adminController");
 
 //Show Venue
-router.get(
-	"/venues/:venueId/addproducts",
-	authMiddleWare,
-	checkRole(["admin"]),
-	async (req, res) => {
-		try {
-			const adminId = req.user?._id;
+router.get("/venues/:venueId/addproducts", secure.admin, async (req, res) => {
+	try {
+		const adminId = req.user?._id;
 
-			const venues = await getAdminVenues(adminId);
-			res.status(200).json(venues);
-		} catch (err) {
-			const status = err.statusCode || 500;
-			res.status(status).json({ message: err.message || "Server error" });
-		}
+		const venues = await getAdminVenues(adminId);
+		res.status(200).json(venues);
+	} catch (err) {
+		const status = err.statusCode || 500;
+		res.status(status).json({ message: err.message || "Server error" });
 	}
-);
+});
 
 // Get products
-router.get(
-	"/venues/:venueId/products",
-	authMiddleWare,
-	checkRole(["admin"]),
-	async (req, res) => {
-		try {
-			const adminId = req.user?._id;
-			const venueId = req.params.venueId;
+router.get("/venues/:venueId/products", secure.admin, async (req, res) => {
+	try {
+		const adminId = req.user?._id;
+		const venueId = req.params.venueId;
 
-			const products = await getMyProducts(adminId, venueId);
-			res.status(200).json(products);
-		} catch (err) {
-			const status = err.statusCode || 500;
-			res.status(status).json({ message: err.message || "Server error" });
-		}
+		const products = await getMyProducts(adminId, venueId);
+		res.status(200).json(products);
+	} catch (err) {
+		const status = err.statusCode || 500;
+		res.status(status).json({ message: err.message || "Server error" });
 	}
-);
+});
 
 //Add product
 router.post(
 	"/venues/:venueId/addproducts",
-	authMiddleWare,
-	checkRole(["admin"]),
-	checkVenueOwner,
+	secure.adminOwner,
 	async (req, res) => {
 		try {
 			const data = req.body;
@@ -76,15 +62,11 @@ router.post(
 // Update product
 router.put(
 	"/venues/:venueId/products/:productId",
-	authMiddleWare,
-	checkRole(["admin"]),
-	checkVenueOwner,
+	secure.adminOwner,
 	async (req, res) => {
 		try {
 			const { productId, venueId } = req.params;
 			const updatedData = req.body;
-			console.log("Router payload:", productId, venueId);
-			// console.log("Router body:", updatedData);
 			const updatedProduct = await updateProduct(productId, venueId, updatedData);
 			res.status(200).json(updatedProduct);
 		} catch (err) {
@@ -97,13 +79,10 @@ router.put(
 // Delete product
 router.delete(
 	"/venues/:venueId/products/:productId",
-	authMiddleWare,
-	checkRole(["admin"]),
-	checkVenueOwner,
+	secure.adminOwner,
 	async (req, res) => {
 		try {
 			const { productId, venueId } = req.params;
-
 			const deleted = await deleteProduct(productId, venueId);
 			res.status(200).json(deleted);
 		} catch (err) {

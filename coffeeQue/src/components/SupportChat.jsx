@@ -18,7 +18,7 @@ export default function SupportChat() {
 
 	const handleSend = () => {
 		if (!input.trim()) return;
-		sendMessage("admin", input);
+		sendMessage("6869c5f7266e7fa1e70d9d0f", input);
 		setInput("");
 	};
 
@@ -50,7 +50,7 @@ export default function SupportChat() {
 					</Typography>
 				) : (
 					filteredMessages.map((msg, idx) => {
-						const isUser = msg.from === (auth?.user?.username || "Guest");
+						const isUser = msg.from === (auth?.user?._id || "Guest");
 						return (
 							<Box key={idx} sx={{ my: 1 }}>
 								<Typography
@@ -58,7 +58,7 @@ export default function SupportChat() {
 									color="text.secondary"
 									sx={{ textAlign: isUser ? "right" : "left", display: "block" }}
 								>
-									{msg.from}
+									{msg.fromUsername || msg.from}
 								</Typography>
 								<Box sx={{ textAlign: isUser ? "right" : "left" }}>
 									<Typography

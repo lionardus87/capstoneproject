@@ -15,7 +15,7 @@ export const ChatProvider = ({ children }) => {
 	// Register user on connect
 	useEffect(() => {
 		if (socket && auth?.user?.username) {
-			socket.emit("register_user", auth.user.username);
+			socket.emit("register_user", auth.user._id);
 		}
 	}, [socket, auth?.user?.username]);
 
@@ -37,6 +37,7 @@ export const ChatProvider = ({ children }) => {
 		if (!socket) return;
 
 		const handleReceive = (msg) => {
+			console.log("Received message:", msg);
 			setMessages((prev) => [...prev, msg]);
 		};
 
@@ -48,22 +49,34 @@ export const ChatProvider = ({ children }) => {
 		if (!socket || !auth?.user?.username || !message.trim()) return;
 
 		const msg = {
-			from: auth.user.username,
+			from: auth.user._id,
+			fromUsername: auth.user.username,
 			to,
 			message: message.trim(),
 		};
 		socket.emit("send_message", msg);
-		// setMessages((prev) => [...prev, msg]);
-		setSelectedUser(to);
+		const userObj = userList.find((u) => u._id === to);
+		if (userObj) {
+			setSelectedUser(userObj);
+		}
 	};
 
 	const userList = useMemo(() => {
-		return [
-			...new Set(
-				messages.map((msg) => msg.from).filter((u) => u !== auth?.user?.username)
-			),
+		const rawUsers = messages
+			.map((msg) =>
+				msg.from !== auth?.user?._id
+					? { _id: msg.from, username: msg.fromUsername || msg.from }
+					: msg.to !== auth?.user?._id
+					? { _id: msg.to, username: msg.toUsername || msg.to }
+					: null
+			)
+			.filter(Boolean);
+
+		const uniqueUsers = [
+			...new Map(rawUsers.map((user) => [user._id, user])).values(),
 		];
-	}, [messages, auth?.user?.username]);
+		return uniqueUsers;
+	}, [messages, auth?.user?._id]);
 
 	useEffect(() => {
 		if (userList.length && !selectedUser) {
@@ -72,13 +85,13 @@ export const ChatProvider = ({ children }) => {
 	}, [userList, selectedUser]);
 
 	const filteredMessages = useMemo(() => {
-		if (!auth?.user?.username || !selectedUser) return [];
+		if (!auth?.user?._id || !selectedUser?._id) return [];
 		return messages.filter(
 			(m) =>
-				(m.from === selectedUser && m.to === auth.user.username) ||
-				(m.from === auth.user.username && m.to === selectedUser)
+				(m.from === selectedUser._id && m.to === auth.user._id) ||
+				(m.from === auth.user._id && m.to === selectedUser._id)
 		);
-	}, [messages, selectedUser, auth?.user?.username]);
+	}, [messages, selectedUser, auth?.user?._id]);
 
 	return (
 		<ChatContext.Provider

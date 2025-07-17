@@ -33,8 +33,8 @@ export default function AdminChatPanel() {
 	}, [filteredMessages]);
 
 	const handleSend = () => {
-		if (input.trim() && selectedUser) {
-			sendMessage(selectedUser, input);
+		if (input.trim() && selectedUser?._id) {
+			sendMessage(selectedUser._id, input);
 			setInput("");
 		}
 	};
@@ -49,18 +49,18 @@ export default function AdminChatPanel() {
 					sx={{ width: 200, color: "text.secondary", borderRight: "1px solid #ccc" }}
 				>
 					{userList.map((user) => {
-						const isSelected = selectedUser === user;
+						const isSelected = selectedUser?._id === user._id;
 						return (
 							<ListItem
-								button
-								key={user}
+								button="true"
+								key={user._id}
 								onClick={() => setSelectedUser(user)}
 								sx={{
 									bgcolor: isSelected ? "action.selected" : "transparent",
 								}}
 							>
 								<ListItemText
-									primary={user}
+									primary={user.username || user._id}
 									primaryTypographyProps={{
 										sx: {
 											fontWeight: isSelected ? "bold" : "normal",
@@ -87,11 +87,11 @@ export default function AdminChatPanel() {
 					>
 						{filteredMessages.length === 0 ? (
 							<Typography variant="body2" color="text.secondary" textAlign="center">
-								No messages with {selectedUser}
+								No messages with {selectedUser?.username || selectedUser?._id || "user"}
 							</Typography>
 						) : (
 							filteredMessages.map((msg, idx) => {
-								const isAdmin = msg.from === auth.user.username;
+								const isAdmin = msg.from === auth.user._id;
 								return (
 									<Box key={idx} sx={{ textAlign: isAdmin ? "right" : "left", my: 0.5 }}>
 										<Typography variant="caption" color="text.secondary">

@@ -40,11 +40,16 @@ export const registerVenue = async ({ venueName, city, postcode, logoUrl }) => {
 export const loginRequest = async ({ identifier, password }) => {
 	try {
 		const normalizedIdentifier = identifier.trim().toLowerCase();
-		const response = await axiosInstance.post("/auth/login", {
+		const { data } = await axiosInstance.post("/auth/login", {
 			identifier: normalizedIdentifier,
 			password,
 		});
-		return { success: true, ...response.data };
+		return {
+			success: true,
+			user: data.user,
+			accessToken: data.accessToken,
+			refreshToken: data.refreshToken,
+		};
 	} catch (error) {
 		console.error("loginRequest error:", error);
 		const errorData = error.response?.data;

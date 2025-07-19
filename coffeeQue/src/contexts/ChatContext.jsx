@@ -54,7 +54,9 @@ export const ChatProvider = ({ children }) => {
 			to,
 			message: message.trim(),
 		};
+
 		socket.emit("send_message", msg);
+
 		const userObj = userList.find((u) => u._id === to);
 		if (userObj) {
 			setSelectedUser(userObj);
